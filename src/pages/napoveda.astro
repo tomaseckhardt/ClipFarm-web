@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import FaqList from '../components/FaqList.astro';
+import Icon from '../components/Icon.astro';
+import { FAQ } from '../lib/faq.ts';
+import { url } from '../lib/site.ts';
+---
+<Base title="Nápověda" description="Časté otázky o ClipFarmu: zkušební verze, instalace, jak vybírá momenty, co dělat, když něco nejde, a omezení.">
+  <section class="page-hero">
+    <div class="glow-bg" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow" data-reveal>Nápověda</span>
+      <h1 data-reveal style="--i: 1">Časté otázky</h1>
+      <p class="lead" data-reveal style="--i: 2">Jak ClipFarm vybírá momenty, co dělat, když něco nejde, a co zatím neumí.</p>
+      <div class="search" data-reveal style="--i: 3">
+        <label for="faq-q" class="sr">Hledat v nápovědě</label>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="faq-q" type="search" placeholder="Hledat, třeba „chat“, „Kick“ nebo „SmartScreen“" autocomplete="off" />
+      </div>
+      <p class="muted small" id="faq-none" role="status" hidden>Nic jsme nenašli. Zkus jiné slovo, nebo projdi témata níž.</p>
+    </div>
+  </section>
+
+  <div class="wrap layout">
+    <nav class="topics" aria-label="Témata nápovědy">
+      <ul>
+        {FAQ.map((g) => <li><a href={`#${g.id}`}>{g.title} <span>{g.items.length}</span></a></li>)}
+      </ul>
+    </nav>
+    <div class="groups">
+      {FAQ.map((g) => (
+        <section class="group" id={g.id} aria-labelledby={`h-${g.id}`}>
+          <h2 id={`h-${g.id}`}>{g.title}</h2>
+          <FaqList items={g.items} />
+        </section>
+      ))}
+      <div class="card still" data-reveal>
+        <h2>Pořád nic?</h2>
+        <p class="muted">V ClipFarmu dej <strong>Nastavení → Uložit diagnostiku</strong> a ZIP pošli správci. Jsou v něm logy a popis systému – bez videí a bez přihlašovacích údajů.</p>
+        <a class="link" href={url('jak-to-funguje/')}>Jak ClipFarm funguje do hloubky <Icon name="arrow" size={16} /></a>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<script>
+  // Hledání v nápovědě: schová otázky, které neobsahují hledaný text; při hledání otevře nalezené.
+  const input = document.querySelector<HTMLInputElement>('#faq-q')!;
+  const none = document.querySelector<HTMLElement>('#faq-none')!;
+  const items = [...document.querySelectorAll<HTMLDetailsElement>('.groups details')];
+  const norm = (s: string) => s.toLocaleLowerCase('cs').normalize('NFD').replace(/\p{Diacritic}/gu, '');
+  const texts = items.map((d) => norm(d.textContent ?? ''));
+  input.addEventListener('input', () => {
+    const q = norm(input.value.trim());
+    let shown = 0;
+    items.forEach((d, i) => {
+      const hit = !q || texts[i].includes(q);
+      d.hidden = !hit;
+      if (q) d.open = hit;
+      if (hit) shown++;
+    });
+    document.querySelectorAll<HTMLElement>('.groups .group').forEach((g) => {
+      g.hidden = ![...g.querySelectorAll('details')].some((d) => !d.hidden);
+    });
+    none.hidden = shown > 0;
+  });
+  // otevřít otázku z odkazu #id
+  const target = location.hash && document.getElementById(location.hash.slice(1));
+  if (target instanceof HTMLDetailsElement) target.open = true;
+</script>
+
+<style>
+  .search {
+    margin-top: 28px; display: flex; align-items: center; gap: 12px; max-width: 560px; padding: 0 18px;
+    background: var(--surface); border: 1px solid var(--line2); border-radius: 16px; color: var(--muted);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search:focus-within { border-color: var(--go); box-shadow: 0 0 0 4px rgba(94, 224, 138, 0.15); }
+  .search input { flex: 1; min-width: 0; min-height: 56px; border: 0; background: transparent; color: var(--text); font: inherit; outline: none; }
+  #faq-none { margin-top: 12px; }
+  .layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; padding-bottom: 40px; }
+  .topics { position: sticky; top: calc(var(--header-h) + 20px); }
+  .topics ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .topics a { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; border-radius: 10px; color: var(--soft); text-decoration: none; font-weight: 650; }
+  .topics a span { font-size: 0.8rem; color: var(--muted); background: var(--field); border-radius: 99px; padding: 0 8px; }
+  .topics a:hover { background: var(--surface); color: var(--go); }
+  .groups { display: grid; gap: 48px; }
+  .group { display: grid; gap: 18px; scroll-margin-top: calc(var(--header-h) + 16px); }
+  .group h2 { font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem); }
+  .still { display: grid; gap: 12px; }
+  .still h2 { font-size: 1.6rem; }
+  .link { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; text-decoration: none; min-height: 44px; }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .topics { position: static; }
+    .topics ul { display: flex; flex-wrap: wrap; gap: 6px; }
+    .topics a { border: 1px solid var(--line2); border-radius: 999px; min-height: 44px; gap: 8px; }
+  }
+</style>

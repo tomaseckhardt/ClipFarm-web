@@ -1,0 +1,291 @@
+---
+import Base from '../layouts/Base.astro';
+import StreamTimeline from '../components/StreamTimeline.astro';
+import DownloadButton from '../components/DownloadButton.astro';
+import Icon from '../components/Icon.astro';
+import { url } from '../lib/site.ts';
+import { DEMO_PEAKS, DEFAULT_LIMIT } from '../lib/demo.ts';
+
+const limits = [1.5, 2, 2.5, 3, 4, 5];
+const cz = (n: number) => n.toLocaleString('cs-CZ', { minimumFractionDigits: 1 });
+const table = limits.map((l) => ({ l, n: DEMO_PEAKS.filter(([, s]) => s >= l).length }));
+const maxN = Math.max(...table.map((r) => r.n));
+---
+<Base title="Jak to funguje" description="Jak ClipFarm vybírá nejlepší momenty ze streamu: skóre z reakcí chatu a hlasitosti, ochrana proti spamu, limit skóre, hranice klipu na střihu scény a formáty 16:9 a 9:16.">
+  <section class="page-hero">
+    <div class="glow-bg" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow" data-reveal>Jak to funguje</span>
+      <h1 data-reveal style="--i: 1">Jak ClipFarm pozná, že se něco stalo</h1>
+      <p class="lead" data-reveal style="--i: 2">
+        Žádná černá skříňka. ClipFarm poslouchá ty, kdo to vědí nejlíp: diváky v chatu
+        a hlasitost streamu. Tady je přesně jak.
+      </p>
+      <ol class="pipeline" data-reveal style="--i: 3" aria-label="Fáze úlohy">
+        <li><span>1</span>Stahování / nahrávání</li>
+        <li><span>2</span>Analýza</li>
+        <li><span>3</span>Stříhání</li>
+        <li><span>4</span>Hotovo</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 1. ZDROJE -->
+  <section class="wrap block" id="zdroje" aria-labelledby="h-src">
+    <div class="head"><span class="num">1</span><h2 id="h-src">Odkud ClipFarm bere video</h2></div>
+    <div class="cards3">
+      <article class="card" data-reveal>
+        <h3>YouTube</h3>
+        <p class="muted">Video nebo záznam streamu v 720p, 1080p nebo 1440p, i se záznamem chatu, pokud existuje. U videí s „nejpřehrávanějšími“ úseky (do zhruba 50 minut) bere jako další signál i heatmapu YouTube.</p>
+      </article>
+      <article class="card" data-reveal style="--i: 1">
+        <h3>Kick živě</h3>
+        <p class="muted">Nahrává video i chat, dokud stream neskončí, po nastavenou dobu, nebo do <strong>Ukončit a nastříhat</strong>. Když nahrávání přeruší výpadek a kanál pořád vysílá, nahrává dál – předchozí část se mezitím stříhá.</p>
+      </article>
+      <article class="card" data-reveal style="--i: 2">
+        <h3>Hlídání kanálu</h3>
+        <p class="muted"><strong>Spustit, až bude živě</strong> hlídá kanál, i když nevysílá. Jakmile streamer začne, ClipFarm stream nahraje, nastříhá a hlídá dál. Každý stream nahraje jen jednou. Hodí se na noc nebo na celý den.</p>
+      </article>
+    </div>
+    <p class="note muted small" data-reveal>Vlastní video jde zpracovat taky: dej ho do složky streamu jako <code>stream.mp4</code> a v okně dej <strong>✂ Přestříhat</strong>.</p>
+  </section>
+
+  <!-- 2. SKÓRE -->
+  <section class="wrap block" id="skore" aria-labelledby="h-score">
+    <div class="head"><span class="num">2</span><h2 id="h-score">Každá sekunda dostane skóre</h2></div>
+    <p class="lead narrow-text" data-reveal>Skóre říká, o kolik <strong>směrodatných odchylek</strong> (σ) je moment výraznější než běžný stav streamu. Jinými slovy: ne „kolik lidí píše“, ale „o kolik víc píšou než obvykle“.</p>
+
+    <div class="signals">
+      <article class="card sig" data-reveal>
+        <div class="sig-icon"><Icon name="chat" size={24} /></div>
+        <h3>Chat</h3>
+        <ul>
+          <li>Počítají se zprávy během <strong>10 s po momentu</strong> – diváci reagují se zpožděním.</li>
+          <li>Každý člověk se počítá <strong>nejvýš jednou za 10 s</strong>. Spam jednoho člověka nic nezmění.</li>
+          <li>Bonus za <code>KEKW</code>, <code>xddd</code>, <code>LUL</code>, <code>???</code>, 😂… jen když je během ~10 s napíšou aspoň <strong>3 různí lidé</strong>.</li>
+        </ul>
+        <div class="spam-demo" aria-hidden="true">
+          <span><b>bot_bob</b> KEKW</span><span><b>bot_bob</b> KEKW</span><span><b>bot_bob</b> KEKW</span><span class="eq">= 1 hlas</span>
+        </div>
+      </article>
+      <article class="card sig" data-reveal style="--i: 1">
+        <div class="sig-icon"><Icon name="sound" size={24} /></div>
+        <h3>Zvuk</h3>
+        <ul>
+          <li>Hlasitost kolem momentu: smích, křik.</li>
+          <li>Bez chatu (YouTube reuploady, nahraná videa) rozhoduje jen zvuk – výsledky jsou slabší, takže se hodí nižší limit, třeba 1,5.</li>
+        </ul>
+      </article>
+      <article class="card sig" data-reveal style="--i: 2">
+        <div class="sig-icon"><Icon name="arrows" size={24} /></div>
+        <h3>Okolí</h3>
+        <ul>
+          <li>Obojí se porovnává s okolím <strong>60 s před a 60 s po</strong>. Krátký výkyv vyjde vysoko, trvalá změna (přepnutí scény, konec pauzy) ne.</li>
+          <li>Druhé měřítko hledá <strong>delší vzrušené pasáže</strong>: 30 s oproti 2 min okolí.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- 3. LIMIT -->
+  <section class="wrap block" id="limit" aria-labelledby="h-limit">
+    <div class="head"><span class="num">3</span><h2 id="h-limit">Limit skóre rozhodne, co bude klip</h2></div>
+    <p class="lead narrow-text" data-reveal>Klip vznikne z každého momentu nad limitem, aspoň 2 minuty od dalšího. Počet klipů omezený není. Výchozí limit je {cz(DEFAULT_LIMIT)} – víc znamená méně a lepších klipů.</p>
+    <div data-reveal><StreamTimeline id="osa-detail" /></div>
+    <div class="limits" data-reveal>
+      <div class="limits-text">
+        <h3>Kolik klipů by dal který limit</h3>
+        <p class="muted">V kartě <strong>Streamy</strong> má každý stream takovou tabulku (limit z Nastavení je zvýrazněný). Málo nebo moc klipů? Nastav limit a dej <strong>✂ Přestříhat</strong> – bez nového stahování, s uloženým chatem. Tady pro ilustrační stream z grafu výš:</p>
+      </div>
+      <table class="lim-table">
+        <caption class="sr">Počet klipů podle limitu skóre pro ilustrační stream</caption>
+        <thead><tr><th scope="col">Limit</th><th scope="col">Klipů</th></tr></thead>
+        <tbody>
+          {table.map((r) => (
+            <tr class:list={{ cur: r.l === DEFAULT_LIMIT }}>
+              <th scope="row">{cz(r.l)}</th>
+              <td><span class="lim-bar" style={`--w: ${(r.n / maxN) * 100}%`}></span><span class="lim-n">{r.n}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4. HRANICE -->
+  <section class="wrap block" id="hranice" aria-labelledby="h-cut">
+    <div class="head"><span class="num">4</span><h2 id="h-cut">Kde klip začne a kde skončí</h2></div>
+    <div class="cutline card" data-reveal aria-hidden="true">
+      <div class="cl-track">
+        <span class="cl-zone pre"></span><span class="cl-zone clip"></span><span class="cl-zone post"></span>
+        <span class="cl-mark start"><b>začátek</b><em>poslední střih scény<br />8–30 s před momentem</em></span>
+        <span class="cl-mark peak"><b>★ moment</b><em>vrchol reakce</em></span>
+        <span class="cl-mark end"><b>konec</b><em>reakce opadne<br />8–40 s po momentu</em></span>
+      </div>
+    </div>
+    <ul class="rules" data-reveal>
+      <li><Icon name="check" /><span><strong>Začátek</strong> je na poslední změně scény 8–30 s před momentem. Když tam žádná není, 22 s před ním.</span></li>
+      <li><Icon name="check" /><span><strong>Konec</strong> přijde, až reakce opadne (8–40 s po momentu), na střihu scény nebo v pauze mezi slovy. Klipy mají typicky 20–60 s.</span></li>
+      <li><Icon name="check" /><span><strong>Ticho delší než 1,5 s</strong> (černá obrazovka, pauza streamu) uvnitř klipu nikdy není. Moment uprostřed ticha (BRB) se přeskočí.</span></li>
+      <li><Icon name="check" /><span><strong>Prolínačky</strong> mezi scénami ClipFarm pozná, takže klip nezačne ani neskončí rozmazanou směsí dvou scén.</span></li>
+    </ul>
+  </section>
+
+  <!-- 5. FORMÁTY -->
+  <section class="wrap block" id="formaty" aria-labelledby="h-fmt">
+    <div class="head"><span class="num">5</span><h2 id="h-fmt">Na šířku, na výšku, nebo kamera nahoře</h2></div>
+    <div class="fmts">
+      <figure class="fmt-card card" data-reveal>
+        <div class="fm f169" aria-hidden="true"><span class="game"></span><span class="cam"></span></div>
+        <figcaption><h3>16:9</h3><p class="muted">Klasika na YouTube. Stejné rozlišení jako zdroj.</p></figcaption>
+      </figure>
+      <figure class="fmt-card card" data-reveal style="--i: 1">
+        <div class="fm f916" aria-hidden="true"><span class="blur"></span><span class="game"></span></div>
+        <figcaption><h3>9:16</h3><p class="muted">Celý obraz na rozmazaném pozadí, vždy 1080×1920. Pro Shorts, TikTok a Reels.</p></figcaption>
+      </figure>
+      <figure class="fmt-card card" data-reveal style="--i: 2">
+        <div class="fm fcam" aria-hidden="true"><span class="face"></span><span class="game"></span></div>
+        <figcaption><h3>9:16 kamera nahoře</h3><p class="muted">Půl na půl: nahoře obličej streamera přes celou šířku, dole celá hra. Stačí jednou natáhnout pole kamery – platí pro celý kanál.</p></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 6. PO STREAMU -->
+  <section class="wrap block" id="po-streamu" aria-labelledby="h-after">
+    <div class="head"><span class="num">6</span><h2 id="h-after">Po streamu: projet, doladit, stáhnout</h2></div>
+    <div class="after">
+      <article class="card" data-reveal>
+        <h3>Tinder pro klipy</h3>
+        <p class="muted">Když se nastříhá nový stream, okno ClipFarmu ukáže jeho klipy jeden po druhém. Video se samo přehraje a ty dáš <strong>→ Nechat</strong>, <strong>← Smazat</strong> nebo <strong>↓ Nevím</strong> – šipkou nebo potáhnutím karty. Mezerník přehraje znovu, Backspace vrátí. Smaže se až na konci po potvrzení.</p>
+      </article>
+      <article class="card" data-reveal style="--i: 1">
+        <h3>Doladit střih (ministudio)</h3>
+        <p class="muted">Přehled 5 minut před klipem a 5 minut po něm, přiblížená časová osa se snímky, hlasitostí, chatem po sekundách a oranžovou značkou vrcholu. Úchyty se při puštění přichytí k nejbližší pauze ve zvuku (s Alt ne). <strong>Uložit a přestříhat</strong> přestříhá jen tenhle klip.</p>
+        <dl class="keys">
+          <div><dt><kbd>Mezerník</kbd></dt><dd>přehrát / zastavit</dd></div>
+          <div><dt><kbd>I</kbd> <kbd>O</kbd></dt><dd>začátek / konec tam, kde stojí přehrávač</dd></div>
+          <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>o 1 s (se Shift 0,1 s)</dd></div>
+          <div><dt><kbd>J</kbd> <kbd>L</kbd></dt><dd>o 5 s</dd></div>
+          <div><dt><kbd>K</kbd></dt><dd>stop</dd></div>
+          <div><dt><kbd>+</kbd> <kbd>−</kbd></dt><dd>přiblížit / oddálit</dd></div>
+        </dl>
+      </article>
+      <article class="card" data-reveal style="--i: 2">
+        <h3>Galerie a stažení</h3>
+        <p class="muted">Všechny klipy jako karty s náhledem z vrcholu reakce, ★ skóre a délkou. Filtr podle streamera, řazení Nejlepší / Nejnovější. Vybrané klipy stáhneš jako jeden ZIP a soubory se jmenují podle streamera a data.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 7. TYPICKÝ POSTUP -->
+  <section class="wrap block" id="postup" aria-labelledby="h-flow">
+    <div class="card flow" data-reveal>
+      <h2 id="h-flow">Typický postup</h2>
+      <ol class="steps">
+        <li><strong>Živák:</strong> vlož <code>https://kick.com/&lt;kanál&gt;</code>, v Nastavení dej <strong>Nahrávat živák</strong> (třeba 3 h) a <strong>▶ Spustit</strong>. Můžeš odejít – po čase nebo s koncem streamu se klipy nastříhají samy. Streamer ještě nevysílá? Zaškrtni <strong>Spustit, až bude živě</strong>.</li>
+        <li><strong>Málo nebo moc klipů?</strong> Karta Streamy → podle tabulky nastav <strong>Limit skóre</strong> → zaškrtni stream → <strong>✂ Přestříhat</strong>.</li>
+        <li><strong>Klip začíná moc brzo nebo končí uprostřed věty?</strong> Doladit střih → posunout → Uložit a přestříhat.</li>
+        <li><strong>Na TikTok:</strong> zaškrtni <strong>Klipy na výšku 9:16</strong> a v kartě Streamy dej ✂ Přestříhat. Hotové klipy zaškrtni v kartě Klipy a Stáhnout.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="wrap block">
+    <div class="end-cta" data-reveal>
+      <div><h2>Vyzkoušej to na svém streamu</h2><p class="muted">14 dní zdarma. Další otázky? <a href={url('napoveda/')}>Nápověda</a>.</p></div>
+      <DownloadButton />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .block { padding-block: clamp(36px, 5vw, 72px); }
+  .pipeline { list-style: none; margin: 32px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .pipeline li { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 8px 8px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line2); font-weight: 650; font-size: 0.95rem; }
+  .pipeline li + li { position: relative; margin-left: 22px; }
+  .pipeline li + li::before { content: '→'; position: absolute; left: -24px; color: var(--muted); }
+  .pipeline span { width: 26px; height: 26px; border-radius: 99px; display: grid; place-items: center; background: rgba(94, 224, 138, 0.15); color: var(--go); font-size: 0.85rem; font-weight: 800; }
+  .head { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+  .head h2 { font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.7rem); }
+  .num { flex: none; width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-family: var(--disp); font-weight: 800; font-size: 1.4rem; color: var(--go-text); background: var(--go); }
+  .narrow-text { max-width: 760px; margin-bottom: 28px; }
+  .cards3, .signals, .after, .fmts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .card { display: grid; gap: 12px; align-content: start; }
+  .note { margin-top: 18px; }
+  .sig ul { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; color: var(--soft); }
+  .sig li::marker { color: var(--go); }
+  .sig-icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-size: 1.4rem; background: var(--field); border: 1px solid var(--line2); color: var(--go); font-weight: 800; }
+  .spam-demo { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; font-size: 0.85rem; }
+  .spam-demo span { padding: 3px 9px; border-radius: 8px; background: var(--bg-deep); border: 1px solid var(--line); color: var(--muted); }
+  .spam-demo span:nth-child(2), .spam-demo span:nth-child(3) { text-decoration: line-through; text-decoration-color: var(--rec); }
+  .spam-demo b { color: var(--soft); }
+  .spam-demo .eq { color: var(--go); border-color: rgba(94, 224, 138, 0.35); font-weight: 700; }
+  .limits { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; margin-top: 28px; }
+  .limits-text { display: grid; gap: 10px; }
+  .lim-table { width: 100%; border-collapse: collapse; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .lim-table th, .lim-table td { padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+  .lim-table thead th { background: var(--surface); font-size: 0.85rem; color: var(--muted); }
+  .lim-table tbody th { width: 90px; font-variant-numeric: tabular-nums; }
+  .lim-table td { display: flex; align-items: center; gap: 12px; }
+  .lim-bar { height: 10px; width: var(--w); border-radius: 99px; background: #5b4a33; flex: 0 0 auto; max-width: 80%; }
+  .lim-n { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .lim-table tr.cur { background: rgba(255, 179, 92, 0.08); }
+  .lim-table tr.cur .lim-bar { background: var(--wait); }
+  .lim-table tr.cur th::after { content: ' · výchozí'; color: var(--wait); font-weight: 600; font-size: 0.8rem; }
+  .lim-table tbody tr:last-child > * { border-bottom: 0; }
+
+  .cutline { padding: 56px 24px 90px; }
+  .cl-track { position: relative; height: 18px; border-radius: 99px; background: var(--field); }
+  .cl-zone { position: absolute; top: 0; bottom: 0; }
+  .cl-zone.pre { left: 10%; width: 25%; background: repeating-linear-gradient(90deg, rgba(94, 224, 138, 0.1) 0 6px, transparent 6px 12px); }
+  .cl-zone.clip { left: 22%; width: 50%; background: rgba(94, 224, 138, 0.35); border-inline: 3px solid var(--go); border-radius: 4px; }
+  .cl-zone.post { left: 60%; width: 25%; background: repeating-linear-gradient(90deg, rgba(255, 179, 92, 0.12) 0 6px, transparent 6px 12px); }
+  .cl-mark { position: absolute; top: 28px; translate: -50% 0; display: grid; justify-items: center; text-align: center; gap: 2px; font-size: 0.85rem; width: 170px; }
+  .cl-mark::before { content: ''; position: absolute; top: -38px; height: 28px; width: 2px; background: currentColor; }
+  .cl-mark b { font-weight: 800; }
+  .cl-mark em { font-style: normal; color: var(--muted); font-size: 0.8rem; line-height: 1.3; }
+  .cl-mark.start { left: 22%; color: var(--go); }
+  .cl-mark.end { left: 72%; color: var(--go); }
+  .cl-mark.peak { left: 40%; top: -44px; color: var(--wait); }
+  .cl-mark.peak::before { top: 30px; }
+  .cl-mark.peak em { display: none; }
+  .rules { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 28px; color: var(--soft); }
+  .rules li { display: flex; gap: 12px; }
+  .rules :global(svg) { color: var(--go); flex: none; margin-top: 3px; }
+
+  .fmt-card { margin: 0; }
+  .fm { height: 220px; border-radius: 16px; background: var(--bg-deep); border: 1px solid var(--line); display: grid; place-items: center; position: relative; overflow: hidden; }
+  .fm span { display: block; border-radius: 6px; }
+  .f169 .game { width: 88%; aspect-ratio: 16 / 9; background: linear-gradient(180deg, #3b3a6b, #5a3f73 55%, #2c5a3a 56%); }
+  .f169 .cam { position: absolute; right: 9%; bottom: 22%; width: 22%; aspect-ratio: 4 / 3; background: linear-gradient(160deg, #8a5a45, #3d2a24); border: 2px solid var(--go); }
+  .f916 { place-items: center; }
+  .f916 .blur, .fcam { width: auto; }
+  .f916 .blur { position: absolute; height: 92%; aspect-ratio: 9 / 16; background: linear-gradient(180deg, #2f3264, #4a3a62 55%, #26483a); filter: blur(2px); opacity: 0.7; }
+  .f916 .game { position: relative; width: 26%; min-width: 96px; aspect-ratio: 16 / 9; background: linear-gradient(180deg, #3b3a6b, #5a3f73 55%, #2c5a3a 56%); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); }
+  .fcam { display: grid; grid-template-rows: 1fr 1fr; gap: 3px; place-items: stretch; padding: 0; height: 220px; aspect-ratio: auto; }
+  .fcam .face, .fcam .game { margin-inline: auto; width: 110px; border-radius: 0; }
+  .fcam .face { background: radial-gradient(30% 40% at 50% 45%, #c48a6c 60%, transparent 61%), linear-gradient(160deg, #6b4a3b, #3d2a24); border-radius: 8px 8px 0 0; }
+  .fcam .game { background: linear-gradient(180deg, #3b3a6b, #5a3f73 55%, #2c5a3a 56%); border-radius: 0 0 8px 8px; }
+  figcaption { display: grid; gap: 6px; }
+  .keys { margin: 4px 0 0; display: grid; gap: 8px; }
+  .keys div { display: flex; gap: 12px; align-items: baseline; }
+  .keys dt { flex: none; min-width: 108px; }
+  .keys dd { margin: 0; color: var(--muted); font-size: 0.92rem; }
+  .flow { display: grid; gap: 22px; }
+  .flow h2 { font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem); }
+  .flow .steps { gap: 18px; color: var(--soft); }
+  .end-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: clamp(24px, 4vw, 40px); border-radius: 24px; border: 1px solid rgba(94, 224, 138, 0.25); background: radial-gradient(500px 200px at 0% 0%, rgba(94, 224, 138, 0.12), transparent 70%), var(--surface); }
+  .end-cta > div { display: grid; gap: 6px; }
+  .end-cta h2 { font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem); }
+  @media (max-width: 960px) {
+    .cards3, .signals, .after, .fmts { grid-template-columns: 1fr; }
+    .limits, .rules { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .cutline { padding: 56px 8px 100px; }
+    .cl-mark { width: 110px; font-size: 0.78rem; }
+    .cl-mark em { font-size: 0.72rem; }
+    .pipeline li + li { margin-left: 0; }
+    .pipeline li + li::before { display: none; }
+  }
+</style>

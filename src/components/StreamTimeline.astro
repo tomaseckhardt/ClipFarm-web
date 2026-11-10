@@ -1,0 +1,249 @@
+---
+// Ilustrační časová osa 3hodinového streamu: sloupce = skóre momentu po minutách (chat + hlasitost),
+// zelená čára = hlasitost, čárkovaná čára = limit skóre. Momenty nad limitem se stanou klipy.
+// Data jsou smyšlená, ale pravidla jsou z README: výchozí limit 2,5, víc = méně a lepších klipů,
+// klipy aspoň 2 min od sebe, typicky 20–60 s.
+interface Props { id?: string }
+const { id = 'osa' } = Astro.props;
+
+import { DEMO_PEAKS as PEAKS, DEMO_MINUTES as MIN, DEFAULT_LIMIT as LIMIT } from '../lib/demo.ts';
+const MAX_S = 7;
+const W = 1800, H = 300;
+
+let seed = 7;
+const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+const bump = (m: number) => Math.max(...PEAKS.map(([pm, s]) => s * Math.exp(-((m - pm) ** 2) / 2.2)));
+const bars = Array.from({ length: MIN }, (_, m) => {
+  const base = 0.45 + 0.55 * rnd() + 0.25 * Math.sin(m / 9);
+  return Math.round(Math.max(base, bump(m)) * 100) / 100;
+});
+const y = (s: number) => H - (s / MAX_S) * (H - 20);
+const vol = bars.map((_, m) => {
+  const v = 0.3 + 0.18 * rnd() + (bump(m) / MAX_S) * 0.55;
+  return `${m === 0 ? 'M' : 'L'}${m * 10 + 4},${(H - v * 230).toFixed(1)}`;
+}).join(' ');
+
+const t = (sec: number) => `${Math.floor(sec / 3600)}:${String(Math.floor((sec % 3600) / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+const mmss = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+const cz = (n: number) => n.toLocaleString('cs-CZ', { minimumFractionDigits: 1 });
+const clips = PEAKS.map(([m, s, d], i) => ({ m, s, d, i, x: (m + 0.5) / MIN }));
+const start = clips.filter((c) => c.s >= LIMIT);
+const total = start.reduce((a, c) => a + c.d, 0);
+const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
+---
+<div class="tl" id={id} data-timeline data-limit={LIMIT}>
+  <div class="tl-head">
+    <div class="tl-stat">
+      <span class="tl-label">Stream</span>
+      <span class="tl-big">3:00:00</span>
+    </div>
+    <svg class="tl-arrow" width="56" height="24" viewBox="0 0 56 24" aria-hidden="true"><path d="M2 12h48M40 4l10 8-10 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="tl-stat">
+      <span class="tl-label">Klipy</span>
+      <span class="tl-big accent"><span data-tl-count>{start.length}</span> <span class="tl-unit" data-tl-word>klipů</span></span>
+    </div>
+    <div class="tl-stat">
+      <span class="tl-label">Dohromady</span>
+      <span class="tl-big"><span data-tl-total>{mmss(total)}</span> <span class="tl-unit">min</span></span>
+    </div>
+    <span class="tl-tag">Ilustrace · kanál nocni_smena</span>
+  </div>
+
+  <div class="tl-chart">
+    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label="Graf skóre momentů tříhodinového streamu se špičkami reakcí chatu">
+      {bars.map((s, m) => <rect class="bar" data-s={s} x={m * 10 + 1.5} y={y(s)} width="7" height={H - y(s)} rx="1.5" />)}
+      <path class="vol" d={vol} vector-effect="non-scaling-stroke" />
+    </svg>
+    <div class="tl-limit" data-tl-line style={`--ly: ${(y(LIMIT) / H) * 100}%`}><span>limit <b data-tl-limit-label>{cz(LIMIT)}</b></span></div>
+    {clips.map((c) => (
+      <div class:list={['mark', { on: c.s >= LIMIT }]} data-s={c.s} data-x={c.x} style={`--x: ${c.x * 100}%; --top: ${(y(c.s) / H) * 100}%`}>
+        <span class="band"></span>
+        <span class="score">★ <span class="v">{cz(c.s)}</span></span>
+      </div>
+    ))}
+    <div class="tl-head-line" aria-hidden="true"><span></span></div>
+  </div>
+  <div class="tl-axis" aria-hidden="true">
+    {[0, 30, 60, 90, 120, 150, 180].map((m) => <span>{t(m * 60)}</span>)}
+  </div>
+  <div class="tl-legend" aria-hidden="true">
+    <span><i class="lg-bar"></i>skóre momentu (chat + hlasitost)</span>
+    <span><i class="lg-vol"></i>hlasitost</span>
+    <span><i class="lg-lim"></i>limit skóre</span>
+  </div>
+
+  <div class="tl-controls">
+    <label class="tl-range">
+      <span class="tl-range-label">Limit skóre <output data-tl-out>{cz(LIMIT)}</output></span>
+      <input type="range" min="1.5" max="6" step="0.5" value={LIMIT} data-tl-input aria-valuetext={cz(LIMIT)} />
+      <span class="muted small">Výchozí 2,5. Víc = méně a lepších klipů. Stejný posuvník má ClipFarm v Nastavení.</span>
+    </label>
+    <button type="button" class="btn btn-ghost btn-sm" data-tl-replay>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5"/></svg>
+      Přehrát znovu
+    </button>
+  </div>
+
+  <ol class="tl-clips" aria-label="Klipy nad limitem skóre" aria-live="polite">
+    {clips.map((c) => (
+      <li class:list={['clip', { on: c.s >= LIMIT }]} data-s={c.s} data-x={c.x} data-d={c.d} style={`--h: ${hues[c.i]}`}>
+        <span class="thumb"><span class="score">★ {cz(c.s)}</span><span class="dur">{mmss(c.d)}</span></span>
+        <span class="when">v čase {t(c.m * 60)}</span>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const cz = (n: number) => n.toLocaleString('cs-CZ', { minimumFractionDigits: 1 });
+  const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const word = (n: number) => (n === 1 ? 'klip' : n >= 2 && n <= 4 ? 'klipy' : 'klipů');
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-timeline]')) {
+    const input = root.querySelector<HTMLInputElement>('[data-tl-input]')!;
+    const out = root.querySelector('[data-tl-out]')!;
+    const line = root.querySelector<HTMLElement>('[data-tl-line]')!;
+    const lineLabel = root.querySelector('[data-tl-limit-label]')!;
+    const count = root.querySelector('[data-tl-count]')!;
+    const countWord = root.querySelector('[data-tl-word]')!;
+    const total = root.querySelector('[data-tl-total]')!;
+    const bars = [...root.querySelectorAll<SVGRectElement>('.bar')];
+    const marks = [...root.querySelectorAll<HTMLElement>('.mark')];
+    const clips = [...root.querySelectorAll<HTMLElement>('.clip')];
+    let progress = 1; // 0..1 kam došel přehrávač osy
+
+    const render = () => {
+      const limit = Number(input.value);
+      out.textContent = lineLabel.textContent = cz(limit);
+      input.setAttribute('aria-valuetext', cz(limit));
+      line.style.setProperty('--ly', `${100 - (limit / 7) * (280 / 300) * 100}%`);
+      for (const b of bars) b.classList.toggle('over', Number(b.dataset.s) >= limit);
+      let n = 0, sum = 0;
+      for (const el of [...marks, ...clips]) {
+        const on = Number(el.dataset.s) >= limit;
+        const hit = Number(el.dataset.x) <= progress;
+        el.classList.toggle('on', on);
+        el.classList.toggle('hit', hit);
+        if (on && hit && el.classList.contains('clip')) { n++; sum += Number(el.dataset.d); }
+      }
+      count.textContent = String(n);
+      countWord.textContent = word(n);
+      total.textContent = mmss(sum);
+    };
+
+    let raf = 0;
+    const play = () => {
+      cancelAnimationFrame(raf);
+      if (reduce.matches) { progress = 1; root.style.setProperty('--p', '1'); render(); return; }
+      const t0 = performance.now(), dur = 4200;
+      const step = (now: number) => {
+        progress = Math.min(1, (now - t0) / dur);
+        root.style.setProperty('--p', String(progress));
+        render();
+        if (progress < 1) raf = requestAnimationFrame(step);
+        else root.classList.remove('playing');
+      };
+      root.classList.add('playing');
+      raf = requestAnimationFrame(step);
+    };
+
+    input.addEventListener('input', render);
+    root.querySelector('[data-tl-replay]')!.addEventListener('click', play);
+
+    if (reduce.matches) { render(); continue; }
+    progress = 0;
+    root.style.setProperty('--p', '0');
+    render();
+    new IntersectionObserver((entries, io) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); play(); }
+    }, { threshold: 0.45 }).observe(root.querySelector('.tl-chart')!);
+  }
+</script>
+
+<style>
+  .tl {
+    --p: 1;
+    background: linear-gradient(180deg, #131a16, #101612); border: 1px solid var(--line); border-radius: 28px;
+    padding: clamp(18px, 3vw, 34px); display: grid; gap: 18px; position: relative; overflow: hidden;
+  }
+  .tl-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px clamp(16px, 3vw, 36px); }
+  .tl-stat { display: grid; gap: 2px; }
+  .tl-label { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .tl-big { font-family: var(--disp); font-weight: 800; font-size: clamp(1.8rem, 1.2rem + 2.4vw, 3rem); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .tl-unit { font-size: 0.5em; color: var(--muted); font-weight: 700; letter-spacing: 0; }
+  .tl-big.accent .tl-unit { color: inherit; opacity: 0.8; }
+  .tl-arrow { color: var(--muted); margin-bottom: 8px; }
+  .tl-tag { margin-left: auto; font-size: 0.82rem; color: var(--muted); border: 1px dashed var(--line2); border-radius: 999px; padding: 4px 12px; }
+
+  .tl-chart { position: relative; height: clamp(170px, 24vw, 280px); margin-top: 26px; }
+  .tl-chart svg { width: 100%; height: 100%; display: block; clip-path: inset(0 calc((1 - var(--p)) * 100%) 0 0); }
+  .bar { fill: #5b4a33; transition: fill 0.35s; }
+  .bar.over { fill: var(--wait); }
+  .vol { fill: none; stroke: var(--go); stroke-width: 2; stroke-linejoin: round; opacity: 0.9; }
+  .tl-limit {
+    position: absolute; left: 0; right: 0; top: var(--ly); border-top: 2px dashed rgba(238, 242, 238, 0.55);
+    transition: top 0.35s var(--ease); pointer-events: none;
+  }
+  .tl-limit span {
+    position: absolute; right: 0; bottom: 4px; font-size: 0.78rem; color: var(--soft); background: rgba(16, 22, 18, 0.85);
+    padding: 1px 8px; border-radius: 6px;
+  }
+  .mark { position: absolute; left: var(--x); top: 0; bottom: 0; width: 0; pointer-events: none; }
+  .mark .band {
+    position: absolute; top: -8px; bottom: 0; left: -10px; width: 20px; border-radius: 6px;
+    background: rgba(94, 224, 138, 0.16); border-inline: 2px solid var(--go); opacity: 0; transform: scaleY(0.6);
+    transform-origin: bottom; transition: opacity 0.3s, transform 0.45s var(--ease);
+  }
+  .mark .score {
+    position: absolute; left: 0; top: var(--top); translate: -50% -135%; white-space: nowrap;
+    opacity: 0; transform: translateY(8px) scale(0.8); transition: opacity 0.3s, transform 0.45s var(--ease);
+    box-shadow: 0 6px 20px -6px rgba(255, 179, 92, 0.7);
+  }
+  .mark.on.hit .band { opacity: 1; transform: none; }
+  .mark.on.hit .score { opacity: 1; transform: none; }
+  .tl-head-line {
+    position: absolute; inset: -30px 0 0; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+    transform: translateX(calc(var(--p) * 100%));
+  }
+  .tl-head-line span { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--text); box-shadow: 0 0 12px rgba(255, 255, 255, 0.6); }
+  .playing .tl-head-line { opacity: 1; }
+
+  .tl-axis { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: -8px; }
+  .tl-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--muted); }
+  .tl-legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .tl-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+  .lg-bar { background: var(--wait); }
+  .lg-vol { background: var(--go); height: 3px !important; }
+  .lg-lim { border-top: 2px dashed var(--soft); height: 0 !important; }
+
+  .tl-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 6px; border-top: 1px solid var(--line); }
+  .tl-range { display: grid; gap: 6px; flex: 1 1 320px; max-width: 560px; padding-top: 12px; }
+  .tl-range-label { font-weight: 650; display: flex; align-items: baseline; gap: 10px; }
+  .tl-range output { font-family: var(--disp); font-weight: 800; font-size: 1.4rem; color: var(--wait); font-variant-numeric: tabular-nums; }
+  .tl-range input { width: 100%; accent-color: var(--wait); height: 32px; cursor: pointer; }
+
+  .tl-clips { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 12px; }
+  .clip { display: none; gap: 6px; }
+  .clip.on { display: grid; }
+  .clip .thumb {
+    position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; border: 1px solid var(--line2);
+    background:
+      radial-gradient(120% 70% at 50% 120%, hsl(var(--h) 45% 32%) 45%, transparent 46%),
+      linear-gradient(180deg, hsl(calc(var(--h) + 40) 40% 26%), hsl(calc(var(--h) + 60) 35% 18%));
+    opacity: 0; transform: translateY(10px) scale(0.94); transition: opacity 0.35s, transform 0.45s var(--ease);
+  }
+  .clip.hit .thumb { opacity: 1; transform: none; }
+  .clip .score { position: absolute; top: 6px; left: 6px; font-size: 0.75rem; padding: 1px 6px; }
+  .clip .dur { position: absolute; right: 6px; bottom: 6px; font-size: 0.75rem; font-weight: 700; background: rgba(0, 0, 0, 0.7); color: #fff; border-radius: 5px; padding: 1px 5px; }
+  .clip .when { font-size: 0.8rem; color: var(--muted); opacity: 0; transition: opacity 0.35s; font-variant-numeric: tabular-nums; }
+  .clip.hit .when { opacity: 1; }
+
+  @media (max-width: 640px) {
+    .tl-tag { margin-left: 0; order: -1; }
+    .tl-arrow { width: 32px; }
+    .mark .score { font-size: 0; padding: 0; width: 12px; height: 12px; border-radius: 99px; translate: -50% -160%; }
+    .mark .band { left: -5px; width: 10px; }
+    .tl-axis span:nth-child(even) { display: none; }
+  }
+</style>

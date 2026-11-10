@@ -1,0 +1,97 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { NAV, url } from '../lib/site.ts';
+
+const here = Astro.url.pathname.replace(/\/?$/, '/');
+const isActive = (path: string) => here === url(path);
+---
+<header class="site-header" data-header>
+  <div class="wrap bar">
+    <a class="brand" href={url()} aria-label="ClipFarm – úvod">
+      <Logo size={30} class="brand-logo" /><span>ClipFarm</span>
+    </a>
+    <nav class="nav-desktop" aria-label="Hlavní navigace">
+      <ul>
+        {NAV.map((item) => (
+          <li>
+            <a href={url(item.path)} class:list={{ 'nav-cta btn btn-go btn-sm': item.path === 'stazeni/' }} aria-current={isActive(item.path) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <button class="menu-btn" type="button" popovertarget="mobile-menu" aria-label="Otevřít menu">
+      <Icon name="menu" size={24} />
+    </button>
+  </div>
+  <div id="mobile-menu" class="mobile-menu" popover>
+    <nav aria-label="Menu">
+      <ul>
+        {NAV.map((item) => (
+          <li><a href={url(item.path)} aria-current={isActive(item.path) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <button class="menu-close" type="button" popovertarget="mobile-menu" popovertargetaction="hide" aria-label="Zavřít menu">
+      <Icon name="close" size={24} />
+    </button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 50; height: var(--header-h);
+    border-bottom: 1px solid transparent; transition: background-color 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+  }
+  .site-header:global(.scrolled) {
+    background: rgba(14, 19, 16, 0.78); border-color: var(--line);
+    backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  }
+  .bar { height: 100%; display: flex; align-items: center; gap: 24px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; margin-right: auto; }
+  .brand span { font-family: var(--disp); font-weight: 800; font-size: 1.5rem; letter-spacing: -0.03em; }
+  .brand:hover :global(.brand-logo) { transform: rotate(-8deg) scale(1.08); }
+  .brand :global(.brand-logo) { transition: transform 0.4s var(--ease); transform-origin: 50% 90%; }
+
+  .nav-desktop ul { display: flex; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0; }
+  .nav-desktop a:not(.nav-cta) {
+    position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 12px;
+    color: var(--muted); text-decoration: none; font-weight: 600; transition: color 0.2s, background-color 0.2s;
+  }
+  .nav-desktop a:not(.nav-cta):hover { color: var(--text); background: rgba(28, 38, 32, 0.7); }
+  .nav-desktop a[aria-current='page']:not(.nav-cta) { color: var(--text); }
+  .nav-desktop a[aria-current='page']:not(.nav-cta)::after {
+    content: ''; position: absolute; left: 14px; right: 14px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--go);
+  }
+  .nav-cta { margin-left: 10px; }
+  .nav-cta[aria-current='page'] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--go); }
+
+  .menu-btn, .menu-close {
+    display: none; width: 48px; height: 48px; place-items: center; border-radius: 14px; border: 1px solid var(--line2);
+    background: var(--surface); color: var(--text); cursor: pointer;
+  }
+  .mobile-menu {
+    position: fixed; inset: 0 0 auto auto; margin: 0; width: 100%; max-width: 100%; height: auto;
+    padding: 12px var(--gutter) 24px; border: 0; border-bottom: 1px solid var(--line2);
+    background: rgba(14, 19, 16, 0.97); backdrop-filter: blur(14px); color: var(--text);
+    opacity: 0; transform: translateY(-12px);
+    transition: opacity 0.25s var(--ease), transform 0.25s var(--ease), overlay 0.25s allow-discrete, display 0.25s allow-discrete;
+  }
+  .mobile-menu:popover-open { opacity: 1; transform: none; }
+  @starting-style { .mobile-menu:popover-open { opacity: 0; transform: translateY(-12px); } }
+  .mobile-menu::backdrop { background: rgba(0, 0, 0, 0.5); }
+  .mobile-menu ul { list-style: none; margin: 56px 0 0; padding: 0; display: grid; gap: 4px; }
+  .mobile-menu a {
+    display: flex; align-items: center; min-height: 56px; padding: 0 16px; border-radius: 14px; font-family: var(--disp);
+    font-size: 1.5rem; font-weight: 700; color: var(--text); text-decoration: none;
+  }
+  .mobile-menu a:hover { background: var(--surface); }
+  .mobile-menu a[aria-current='page'] { color: var(--go); background: rgba(94, 224, 138, 0.08); }
+  .mobile-menu a[aria-current='page']::before { content: ''; width: 8px; height: 8px; border-radius: 99px; background: var(--go); margin-right: 12px; }
+  .menu-close { display: grid; position: absolute; top: 10px; right: var(--gutter); }
+
+  @media (max-width: 860px) {
+    .nav-desktop { display: none; }
+    .menu-btn { display: grid; }
+  }
+</style>

@@ -1,0 +1,111 @@
+---
+// Generuje se z content/CHANGELOG.md (kopie z repa aplikace: npm run sync-changelog). Nic se tu nepřepisuje ručně.
+import Base from '../layouts/Base.astro';
+import DownloadButton from '../components/DownloadButton.astro';
+import { releases, latest } from '../lib/site.ts';
+import { inline, czDate } from '../lib/changelog.ts';
+
+const LABEL = { new: 'Nové', fix: 'Opravy', removed: 'Odebráno', topic: '' } as const;
+---
+<Base title="Novinky" description={`Co přinesla která verze ClipFarmu. Nejnovější je ${latest.version}. Changelog generovaný přímo z aplikace.`}>
+  <section class="page-hero">
+    <div class="glow-bg" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow" data-reveal>Novinky</span>
+      <h1 data-reveal style="--i: 1">Co je nového</h1>
+      <p class="lead" data-reveal style="--i: 2">
+        Co přinesla která verze, nejnovější nahoře. Stejný přehled ti ClipFarm ukáže po každé aktualizaci.
+        Opravy zvyšují poslední číslo verze, nové funkce prostřední.
+      </p>
+    </div>
+  </section>
+
+  <div class="wrap layout">
+    <nav class="toc" aria-label="Verze">
+      <p class="toc-title">Verze</p>
+      <ul>
+        {releases.map((r) => (
+          <li><a href={`#${r.id}`}>{r.version}{r.date && <span>{czDate(r.date)}</span>}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <ol class="releases">
+      {releases.map((r, i) => (
+        <li class="release" id={r.id}>
+          <div class="rel-dot" aria-hidden="true"></div>
+          <article class:list={['card', { latest: i === 0 }]} data-reveal>
+            <header class="rel-head">
+              <h2>{r.version}</h2>
+              {i === 0 && <span class="chip now">Nejnovější</span>}
+              {r.date && <time datetime={r.date} class="muted">{czDate(r.date)}</time>}
+            </header>
+            {r.intro.map((p) => <p class="intro" set:html={inline(p)} />)}
+            {r.groups.map((g) => (
+              <section class="group">
+                {g.title && (
+                  <h3 class:list={['g-title', g.kind]}>
+                    {g.kind === 'topic' ? g.title : LABEL[g.kind]}
+                  </h3>
+                )}
+                <ul>
+                  {g.items.map((item) => <li set:html={inline(item)} />)}
+                </ul>
+              </section>
+            ))}
+          </article>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <section class="wrap end">
+    <div class="end-card" data-reveal>
+      <p>Chceš {latest.version}? Stará verze se aktualizuje sama, nová se stahuje tady:</p>
+      <DownloadButton size="md" />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; padding-bottom: 40px; }
+  .toc { position: sticky; top: calc(var(--header-h) + 20px); max-height: calc(100vh - var(--header-h) - 40px); overflow-y: auto; }
+  .toc-title { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+  .toc ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .toc a { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; padding: 7px 12px; border-radius: 10px; color: var(--soft); text-decoration: none; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .toc a span { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+  .toc a:hover { background: var(--surface); color: var(--go); }
+  .releases { list-style: none; margin: 0; padding: 0 0 0 28px; display: grid; gap: 28px; position: relative; }
+  .releases::before { content: ''; position: absolute; left: 6px; top: 12px; bottom: 12px; width: 2px; background: linear-gradient(var(--go), var(--line2) 30%, var(--line)); border-radius: 2px; }
+  .release { position: relative; scroll-margin-top: calc(var(--header-h) + 16px); }
+  .rel-dot { position: absolute; left: -28px; top: 30px; width: 14px; height: 14px; border-radius: 99px; background: var(--bg); border: 2px solid var(--line2); }
+  .release:first-child .rel-dot { border-color: var(--go); background: var(--go); box-shadow: 0 0 0 6px rgba(94, 224, 138, 0.15); }
+  .card { display: grid; gap: 16px; }
+  .card.latest { border-color: rgba(94, 224, 138, 0.35); }
+  .release:target .card { border-color: var(--go); box-shadow: 0 0 0 4px rgba(94, 224, 138, 0.12); }
+  .rel-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .rel-head h2 { font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem); font-variant-numeric: tabular-nums; }
+  .now { color: var(--go); border-color: rgba(94, 224, 138, 0.4); font-size: 0.8rem; padding: 3px 10px; }
+  .rel-head time { margin-left: auto; font-size: 0.92rem; }
+  .intro { font-size: 1.08rem; color: var(--text); }
+  .group { display: grid; gap: 10px; }
+  .g-title { font-family: inherit; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; justify-self: start; padding: 3px 10px; border-radius: 8px; background: var(--field); color: var(--soft); }
+  .g-title.new { background: rgba(94, 224, 138, 0.14); color: var(--go); }
+  .g-title.fix { background: rgba(255, 179, 92, 0.14); color: var(--wait); }
+  .g-title.removed { background: rgba(255, 107, 107, 0.12); color: #ff9c9c; }
+  .g-title.topic { text-transform: none; letter-spacing: 0; font-size: 0.95rem; }
+  .group ul { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; color: var(--soft); }
+  .group li::marker { color: var(--go); }
+  .end { padding-block: 20px 60px; }
+  .end-card { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; justify-content: space-between; padding: 24px 28px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .toc { position: static; max-height: none; }
+    .toc ul { display: flex; flex-wrap: wrap; gap: 6px; }
+    .toc a { border: 1px solid var(--line2); border-radius: 999px; padding: 6px 12px; min-height: 40px; align-items: center; }
+    .toc a span { display: none; }
+    .releases { padding-left: 22px; }
+    .rel-dot { left: -22px; }
+    .releases::before { left: 4px; }
+  }
+</style>

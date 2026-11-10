@@ -1,0 +1,13 @@
+---
+import type { Faq } from '../lib/faq.ts';
+interface Props { items: Faq[] }
+const { items } = Astro.props;
+---
+<div class="faq">
+  {items.map((f, i) => (
+    <details id={f.id} data-reveal style={`--i: ${Math.min(i, 4)}`}>
+      <summary>{f.q}</summary>
+      <div class="answer" set:html={f.a} />
+    </details>
+  ))}
+</div>

@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { url } from '../lib/site.ts';
+const flat = Array.from({ length: 48 }, (_, i) => 3 + ((i * 7) % 5));
+---
+<Base title="Stránka nenalezena" description="Tahle stránka na webu ClipFarmu neexistuje." noindex>
+  <section class="nf">
+    <div class="glow-bg" aria-hidden="true"></div>
+    <div class="wrap nf-inner">
+      <p class="code" aria-hidden="true">404</p>
+      <h1>Tady se nic nestalo.</h1>
+      <p class="lead">Chat mlčí, hlasitost nulová, skóre 0,0. Z tohohle místa klip nebude – stránka neexistuje nebo se přesunula.</p>
+      <div class="flat" aria-hidden="true">
+        {flat.map((h) => <i style={`--h: ${h}`} />)}
+        <span class="lim">limit 2,5</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-go btn-big" href={url()}>Na úvod <Icon name="arrow" size={20} /></a>
+        <a class="btn btn-ghost btn-big" href={url('stazeni/')}>Stažení</a>
+        <a class="btn btn-ghost btn-big" href={url('napoveda/')}>Nápověda</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { position: relative; padding-block: clamp(64px, 10vw, 140px); }
+  .nf-inner { display: grid; gap: 22px; justify-items: center; text-align: center; }
+  .code { font-family: var(--disp); font-weight: 800; font-size: clamp(6rem, 3rem + 14vw, 12rem); line-height: 0.9; letter-spacing: -0.05em; color: transparent; -webkit-text-stroke: 2px var(--line2); }
+  h1 { font-size: clamp(2.2rem, 1.4rem + 3.5vw, 4rem); }
+  .lead { max-width: 560px; }
+  .flat { position: relative; display: flex; align-items: flex-end; gap: 3px; width: min(100%, 560px); height: 90px; padding-top: 30px; border-bottom: 1px solid var(--line2); }
+  .flat i { flex: 1; height: calc(var(--h) * 2px); background: #5b4a33; border-radius: 2px 2px 0 0; }
+  .lim { position: absolute; left: 0; right: 0; top: 18px; border-top: 2px dashed rgba(238, 242, 238, 0.4); font-size: 0.75rem; color: var(--muted); text-align: right; padding-top: 2px; }
+  .cta-row { justify-content: center; }
+</style>

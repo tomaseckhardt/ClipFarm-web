@@ -1,0 +1,59 @@
+---
+import Logo from './Logo.astro';
+import { NAV, url, latest } from '../lib/site.ts';
+import oflBricolage from '../../assets/fonts/OFL-Bricolage-Grotesque.txt?url';
+import oflInstrument from '../../assets/fonts/OFL-Instrument-Sans.txt?url';
+---
+<footer class="site-footer">
+  <div class="wrap cols">
+    <div class="about">
+      <a class="brand" href={url()}><Logo size={26} /><span>ClipFarm</span></a>
+      <p class="muted">Automatické highlight klipy ze streamů. Z YouTube i z Kicku, na šířku i na výšku 9:16.</p>
+      <p class="muted small">Windows · Linux · aktuální verze <a href={url(`novinky/#${latest.id}`)}>{latest.version}</a></p>
+    </div>
+    <nav aria-label="Patička">
+      <h2 class="col-title">Web</h2>
+      <ul>
+        {NAV.map((item) => <li><a href={url(item.path)}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="credits">
+      <h2 class="col-title">Podklady a licence</h2>
+      <p>
+        Hudba v ukázkových videích: „Happy Beats / Business Moves“ Vol. 1, 9 a 10 – Sascha Ende
+        (<a href="https://ende.app/en" rel="noopener">ende.app</a>), licence <a href="https://creativecommons.org/licenses/by/4.0/deed.cs" rel="noopener license">CC&nbsp;BY&nbsp;4.0</a>.
+      </p>
+      <p>Zvuky ve videích: <a href="https://kenney.nl" rel="noopener">Kenney.nl</a> (CC0).</p>
+      <p>
+        Písma Bricolage Grotesque a Instrument Sans: SIL Open Font License 1.1
+        (<a href={oflBricolage}>licence 1</a>, <a href={oflInstrument}>licence 2</a>).
+      </p>
+      <p class="muted">Kanály, přezdívky a skóre v ilustracích a videích jsou smyšlené.</p>
+    </div>
+  </div>
+  <div class="wrap base">
+    <span>ClipFarm {latest.version}</span>
+    <a href="#obsah" class="top-link">Nahoru ↑</a>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--line); background: var(--bg-deep); padding-top: 56px; margin-top: 40px; }
+  .cols { display: grid; grid-template-columns: 1.2fr 0.7fr 1.6fr; gap: 40px; padding-bottom: 40px; }
+  .about { display: grid; gap: 12px; align-content: start; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; }
+  .brand span { font-family: var(--disp); font-weight: 800; font-size: 1.35rem; letter-spacing: -0.03em; }
+  .col-title { font-family: inherit; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  nav a { color: var(--soft); text-decoration: none; display: inline-flex; min-height: 36px; align-items: center; }
+  nav a:hover { color: var(--go); }
+  .credits { display: grid; gap: 10px; font-size: 0.92rem; color: var(--soft); align-content: start; }
+  .base {
+    display: flex; justify-content: space-between; gap: 16px; padding-block: 20px 28px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 0.9rem;
+  }
+  .top-link { color: var(--muted); text-decoration: none; min-height: 36px; display: inline-flex; align-items: center; }
+  .top-link:hover { color: var(--go); }
+  @media (max-width: 860px) { .cols { grid-template-columns: 1fr 1fr; } .about { grid-column: 1 / -1; } }
+  @media (max-width: 520px) { .cols { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,57 @@
+---
+// Video: muted, playsinline, loop, preload="metadata", poster z brag.jpg. Spouští se, až je vidět (site.ts),
+// mimo obraz se pozastaví. Tlačítka: přehrát/pozastavit a zvuk (zapnutí zvuku ztlumí ostatní videa).
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  src: string; poster: ImageMetadata; label: string; description: string;
+  vertical?: boolean; class?: string; id?: string;
+}
+const { src, poster, label, description, vertical = false, class: cls, id } = Astro.props;
+const p = await getImage({ src: poster, width: vertical ? 540 : 1280, format: 'webp', quality: 78 });
+const descId = `${id ?? src.replace(/\W+/g, '-')}-desc`;
+---
+<figure class:list={['player', { vertical }, cls]} id={id}>
+  <video
+    src={src} poster={p.src} width={p.attributes.width} height={p.attributes.height}
+    muted playsinline loop preload="metadata" data-autoplay
+    aria-label={label} aria-describedby={descId}
+  ></video>
+  <p class="sr" id={descId}>{description}</p>
+  <div class="controls">
+    <button type="button" class="ctl" data-act="play" aria-label="Přehrát video">
+      <span class="i-play"><Icon name="play" size={18} /></span><span class="i-pause"><Icon name="pause" size={18} /></span>
+    </button>
+    <button type="button" class="ctl ctl-sound" data-act="sound" aria-pressed="false">
+      <span class="i-mute"><Icon name="mute" size={18} /></span><span class="i-sound"><Icon name="sound" size={18} /></span>
+      <span class="ctl-label">Zapnout zvuk</span>
+    </button>
+  </div>
+</figure>
+
+<style>
+  .player { position: relative; margin: 0; border-radius: inherit; overflow: hidden; background: #0b0f0d; isolation: isolate; }
+  video { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; }
+  .vertical video { aspect-ratio: 9 / 16; }
+  .controls {
+    position: absolute; left: 12px; bottom: 12px; display: flex; gap: 8px; z-index: 2;
+    opacity: 0.92; transition: opacity 0.25s;
+  }
+  .ctl {
+    display: inline-flex; align-items: center; gap: 8px; height: 40px; min-width: 40px; padding: 0 11px; border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(10, 14, 12, 0.72); color: #fff; cursor: pointer;
+    font: inherit; font-size: 0.88rem; font-weight: 600; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transition: background-color 0.2s, transform 0.2s var(--ease);
+  }
+  .ctl:hover { background: rgba(28, 38, 32, 0.9); transform: translateY(-1px); }
+  .ctl-sound[aria-pressed='true'] { background: var(--go); color: var(--go-text); border-color: transparent; }
+  .i-pause, .i-sound { display: none; }
+  .player:global(.playing) .i-play { display: none; }
+  .player:global(.playing) .i-pause { display: inline-flex; }
+  .ctl-sound[aria-pressed='true'] .i-mute { display: none; }
+  .ctl-sound[aria-pressed='true'] .i-sound { display: inline-flex; }
+  .i-play, .i-mute { display: inline-flex; }
+  .vertical .ctl-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+</style>

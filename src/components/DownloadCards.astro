@@ -1,0 +1,81 @@
+---
+// Karty Windows / Linux se systémovými požadavky (úvod i stránka Stažení).
+import DownloadButton from './DownloadButton.astro';
+import Icon from './Icon.astro';
+import { hasDownload, latest, url } from '../lib/site.ts';
+interface Props { onDownloadPage?: boolean }
+const { onDownloadPage = false } = Astro.props;
+---
+<div class="dl-grid">
+  <article class="card dl-card win spot" id={onDownloadPage ? 'windows' : undefined} data-reveal>
+    <div class="dl-top">
+      <span class="os-icon"><Icon name="windows" size={26} /></span>
+      <div>
+        <h3>Windows</h3>
+        <p class="muted small">ClipFarm.exe · instalačka · {latest.version}</p>
+      </div>
+      <span class="chip trial">14 dní zdarma</span>
+    </div>
+    <ul class="ticks">
+      <li>Nic dalšího neinstaluješ: yt-dlp, ffmpeg i Node.js jsou přibalené.</li>
+      <li>Instaluje se jen pro tebe, bez admina. Ikona na ploše a v nabídce Start.</li>
+      <li>Klipy v <code>Dokumenty\ClipFarm</code>. Aktualizace jedním klikem.</li>
+      <li>Přihlášení přes Discord, pak 14 dní celý ClipFarm. Žádná kreditka.</li>
+    </ul>
+    <div class="dl-actions">
+      {onDownloadPage && !hasDownload ? (
+        <div class="pending" role="note">
+          <strong>Instalačku ti zatím pošle správce.</strong>
+          <span class="muted small">Stahuje se z GitHub Releases soukromého repa – kdo k němu nemá přístup, dostane ClipFarm-Setup.exe od správce.</span>
+        </div>
+      ) : (
+        <DownloadButton label="Stáhnout pro Windows" />
+      )}
+      <p class="muted small warn"><Icon name="shield" size={16} /><span>Windows napoprvé varuje (instalačka není podepsaná): <strong>Další informace → Přesto spustit</strong>.</span></p>
+    </div>
+  </article>
+
+  <article class="card dl-card linux spot" id={onDownloadPage ? 'linux' : undefined} data-reveal style="--i: 1">
+    <div class="dl-top">
+      <span class="os-icon"><Icon name="linux" size={26} /></span>
+      <div>
+        <h3>Linux</h3>
+        <p class="muted small">z gitu · instalace-linux.sh</p>
+      </div>
+    </div>
+    <ul class="ticks">
+      <li>Fedora 41+, Ubuntu 24.04+, Debian 13+, Arch.</li>
+      <li>Potřebuje Python 3.12+, yt-dlp, ffmpeg a Node.js 22+ – instalační skript doinstaluje, co chybí.</li>
+      <li>Ikona v nabídce aplikací (Super → ClipFarm), aktualizace přes git jedním tlačítkem.</li>
+      <li>Repo je soukromé: <code>git clone</code> jen pro collaborators. Bez přihlášení.</li>
+    </ul>
+    <div class="dl-actions">
+      <a class="btn btn-ghost btn-big" href={onDownloadPage ? '#instalace-linux' : url('stazeni/#instalace-linux')}>
+        Návod pro Linux <Icon name="arrow" size={20} />
+      </a>
+      <p class="muted small warn"><span>macOS podporovaný není.</span></p>
+    </div>
+  </article>
+</div>
+
+<style>
+  .dl-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; }
+  .dl-card { display: grid; gap: 22px; align-content: start; }
+  .dl-card.win { border-color: rgba(94, 224, 138, 0.3); background: linear-gradient(160deg, #17231c, var(--surface) 55%); }
+  .dl-top { display: flex; gap: 16px; align-items: center; }
+  .dl-top h3 { font-size: 1.7rem; }
+  .os-icon { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: var(--field); border: 1px solid var(--line2); color: var(--go); flex: none; }
+  .trial { margin-left: auto; color: var(--go); border-color: rgba(94, 224, 138, 0.35); white-space: nowrap; }
+  .ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; color: var(--soft); }
+  .ticks li { position: relative; padding-left: 30px; }
+  .ticks li::before {
+    content: ''; position: absolute; left: 0; top: 4px; width: 18px; height: 18px; border-radius: 6px;
+    background: rgba(94, 224, 138, 0.14) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235ee08a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4L18 8'/%3E%3C/svg%3E") center / 14px no-repeat;
+  }
+  .dl-actions { display: grid; gap: 12px; justify-items: start; margin-top: auto; }
+  .warn { display: flex; gap: 8px; align-items: flex-start; }
+  .warn :global(svg) { flex: none; margin-top: 3px; color: var(--wait); }
+  .pending { display: grid; gap: 4px; padding: 14px 16px; border-radius: 14px; border: 1px dashed rgba(94, 224, 138, 0.45); background: rgba(94, 224, 138, 0.06); }
+  @media (max-width: 860px) { .dl-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 420px) { .dl-top { flex-wrap: wrap; } .trial { margin-left: 0; } }
+</style>
