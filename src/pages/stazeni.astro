@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import DownloadCards from '../components/DownloadCards.astro';
 import DownloadButton from '../components/DownloadButton.astro';
 import Icon from '../components/Icon.astro';
-import { url, latest, hasDownload } from '../lib/site.ts';
+import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
 ---
 <Base title="Stažení" description="Stáhni ClipFarm pro Windows (instalačka ClipFarm.exe) nebo nainstaluj na Linuxu. 14 dní zkušební verze zdarma, systémové požadavky a postup instalace krok za krokem.">
   <section class="page-hero">
@@ -21,7 +21,8 @@ import { url, latest, hasDownload } from '../lib/site.ts';
     </div>
   </section>
 
-  <section class="wrap block">
+  <section class="wrap block" aria-labelledby="h-dl">
+    <h2 id="h-dl" class="sr">Windows a Linux</h2>
     <DownloadCards onDownloadPage />
   </section>
 
@@ -33,19 +34,19 @@ import { url, latest, hasDownload } from '../lib/site.ts';
         <ol class="steps big-steps">
           <li>
             <strong>Stáhni instalačku</strong> <code>ClipFarm-Setup-&lt;verze&gt;.exe</code>.
-            {!hasDownload && <span class="muted"> Zatím ji posílá správce.</span>}
+            {!hasDownload && <span class="muted"> Zatím ji posílá správce ClipFarmu{contactUrl && <> – <a href={contactUrl} rel="noopener">napiš mu</a></>}.</span>}
           </li>
           <li>
             <strong>Spusť ji.</strong> Windows SmartScreen napoprvé varuje, protože instalačka není podepsaná:
             klikni na <strong>Další informace</strong> a pak <strong>Přesto spustit</strong>.
           </li>
           <li>
-            <strong>Instalace proběhne sama</strong> – jen pro tebe, bez admina, do <code>%LOCALAPPDATA%\Programs\ClipFarm</code>.
+            <strong>Instalace proběhne sama</strong> – jen pro tebe, bez administrátorských práv, do <code>%LOCALAPPDATA%\<wbr />Programs\<wbr />ClipFarm</code>.
             Ikona je na ploše a v nabídce Start a ClipFarm se pak otevře sám.
           </li>
           <li>
-            <strong>Přihlas se přes Discord.</strong> Nový účet dostane 14 dní zkušební verze; nahoře v okně uvidíš
-            „Zkušební verze · zbývá N dní“.
+            <strong>Přihlas se přes Discord.</strong> Přihlašuješ se přímo na stránce Discordu, heslo ClipFarm nevidí.
+            Nový účet dostane 14 dní zkušební verze; nahoře v okně uvidíš „Zkušební verze · zbývá N dní“.
           </li>
           <li>
             <strong>Vlož odkaz</strong> na YouTube video nebo <code>https://kick.com/&lt;kanál&gt;</code> a zmáčkni
@@ -55,6 +56,7 @@ import { url, latest, hasDownload } from '../lib/site.ts';
         </ol>
       </div>
       <div class="split-visual" aria-hidden="true">
+        <p class="illus">Takhle to vypadá ve Windows</p>
         <div class="ss" data-reveal>
           <div class="ss-head"><Icon name="shield" size={22} /> Systém Windows ochránil váš počítač</div>
           <p>Filtr SmartScreen v programu Windows Defender zabránil spuštění nerozpoznané aplikace…</p>
@@ -74,7 +76,7 @@ import { url, latest, hasDownload } from '../lib/site.ts';
       <h2 id="h-trial">Zkušební verze a přístup</h2>
       <div class="cols3">
         <div><h3>14 dní celý ClipFarm</h3><p class="muted">Kdo se do ClipFarm.exe přihlásí poprvé, dostane celý ClipFarm na 14 dní. Žádné ořezané funkce, žádný vodoznak, žádná kreditka.</p></div>
-        <div><h3>Co potom</h3><p class="muted">Okno řekne „Zkušební doba skončila“ a nabídne <strong>Mám zájem o přístup</strong>. Správce to uvidí a přístup ti povolí. Klipy ze zkušební doby nikam nemizí.</p></div>
+        <div><h3>Co potom</h3><p class="muted">Okno řekne „Zkušební doba skončila“ a nabídne <strong>Mám zájem o přístup</strong>. Správce ClipFarmu to uvidí a přístup ti povolí – natrvalo, nebo na dobu určitou (třeba po měsících). Cenu tenhle web neuvádí. Klipy ze zkušební doby nikam nemizí.</p></div>
         <div><h3>Ověření přístupu</h3><p class="muted">Při každém spuštění a pak každých 6 hodin. Bez internetu ClipFarm 3 dny jede normálně, potom jen galerie, střih a přestříhání.</p></div>
       </div>
     </div>
@@ -85,9 +87,9 @@ import { url, latest, hasDownload } from '../lib/site.ts';
       <div class="split-text">
         <span class="eyebrow">Linux</span>
         <h2 id="h-linux">Instalace na Linuxu</h2>
-        <p class="muted">Fedora 41+, Ubuntu 24.04+, Debian 13+ a Arch. Repo je soukromé: <code>git clone</code> funguje jen pro collaborators – o přístup požádej správce. Gitová verze přihlášení nemá.</p>
+        <p class="muted">Fedora 41+, Ubuntu 24.04+, Debian 13+ a Arch. Na Linuxu se ClipFarm instaluje z gitu a repozitář je soukromý – stáhnout ho můžou jen pozvaní, o přístup požádej správce ClipFarmu. Gitová verze přihlášení nemá.</p>
         <ol class="steps big-steps">
-          <li><strong>Naklonuj repo</strong> ClipFarm (adresu ti dá správce).</li>
+          <li><strong>Stáhni repozitář</strong> přes <code>git clone</code> (adresu ti dá správce).</li>
           <li><strong>Spusť instalaci:</strong> <code>bash instalace-linux.sh</code>, nebo v Souborech pravým tlačítkem → Spustit jako program. Doinstaluje jen to, co chybí.</li>
           <li><strong>Hotovo.</strong> ClipFarm se spustí a vytvoří si ikonu v nabídce aplikací (Super → ClipFarm).</li>
         </ol>
@@ -111,15 +113,15 @@ import { url, latest, hasDownload } from '../lib/site.ts';
       <table>
         <thead><tr><th scope="col"><span class="sr">Vlastnost</span></th><th scope="col">Windows</th><th scope="col">Linux</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Systém</th><td>Windows (ClipFarm.exe)</td><td>Fedora 41+, Ubuntu 24.04+, Debian 13+, Arch</td></tr>
-          <tr><th scope="row">Co je potřeba</th><td>Nic – yt-dlp, ffmpeg a Node.js jsou přibalené</td><td>Python 3.12+, yt-dlp, ffmpeg, Node.js 22+ (doinstaluje <code>instalace-linux.sh</code>)</td></tr>
-          <tr><th scope="row">Instalace</th><td>Instalačka, jen pro tebe, bez admina</td><td>Z gitu (soukromé repo), <code>bash instalace-linux.sh</code></td></tr>
-          <tr><th scope="row">Přihlášení</th><td>Discord, 14 dní zkušební verze</td><td>Bez přihlášení</td></tr>
-          <tr><th scope="row">Aktualizace</th><td>Jedním klikem, kontrola SHA256</td><td>Jedním klikem přes <code>git pull</code></td></tr>
-          <tr><th scope="row">Okno</th><td colspan="2">Aplikace v prohlížeči (Chrome, Edge, Brave, Vivaldi nebo Chromium v režimu okna, jinak běžná karta) na <code>clipfarm.localhost:8765</code></td></tr>
-          <tr><th scope="row">Místo na disku</th><td colspan="2">Za hodinu streamu: 720p ~1,5 GB · 1080p ~3,5 GB · 1440p ~6,5 GB. Zdroje starší než 30 dní ClipFarm nabídne ke smazání.</td></tr>
-          <tr><th scope="row">Internet</th><td colspan="2">Na stahování a nahrávání (a na přihlášení u ClipFarm.exe)</td></tr>
-          <tr><th scope="row">macOS</th><td colspan="2">Není podporovaný</td></tr>
+          <tr><th scope="row">Systém</th><td data-os="Windows">Windows (ClipFarm.exe)</td><td data-os="Linux">Fedora 41+, Ubuntu 24.04+, Debian 13+, Arch</td></tr>
+          <tr><th scope="row">Co je potřeba</th><td data-os="Windows">Nic – yt-dlp, ffmpeg a Node.js jsou přibalené</td><td data-os="Linux">Python 3.12+, yt-dlp, ffmpeg, Node.js 22+ (doinstaluje <code>instalace-linux.sh</code>)</td></tr>
+          <tr><th scope="row">Instalace</th><td data-os="Windows">Instalačka, jen pro tebe, bez administrátorských práv</td><td data-os="Linux">Z gitu (soukromý repozitář, jen pro pozvané), <code>bash instalace-linux.sh</code></td></tr>
+          <tr><th scope="row">Přihlášení</th><td data-os="Windows">Discord, 14 dní zkušební verze</td><td data-os="Linux">Bez přihlášení</td></tr>
+          <tr><th scope="row">Aktualizace</th><td data-os="Windows">Jedním klikem, kontrola SHA256</td><td data-os="Linux">Jedním klikem přes <code>git pull</code></td></tr>
+          <tr><th scope="row">Okno</th><td colspan="2" data-os="Windows i Linux">Aplikace v prohlížeči (Chrome, Edge, Brave, Vivaldi nebo Chromium v režimu okna, jinak běžná karta) na <code>clipfarm.localhost:8765</code></td></tr>
+          <tr><th scope="row">Místo na disku</th><td colspan="2" data-os="Windows i Linux">Za hodinu streamu: 720p ~1,5 GB · 1080p ~3,5 GB · 1440p ~6,5 GB. Zdroje starší než 30 dní ClipFarm nabídne ke smazání.</td></tr>
+          <tr><th scope="row">Internet</th><td colspan="2" data-os="Windows i Linux">Na stahování a nahrávání (a na přihlášení u ClipFarm.exe)</td></tr>
+          <tr><th scope="row">macOS</th><td colspan="2" data-os="Windows i Linux">Není podporovaný</td></tr>
         </tbody>
       </table>
     </div>
@@ -137,7 +139,7 @@ import { url, latest, hasDownload } from '../lib/site.ts';
       </article>
       <article class="card" id="odinstalace" data-reveal style="--i: 2">
         <h3>Odinstalace</h3>
-        <p class="muted"><strong>Windows:</strong> Nastavení → Aplikace → ClipFarm → Odinstalovat. Jestli smazat i klipy, se zeptá (výchozí je nechat). <strong>Linux:</strong> smaž složku ClipFarm a <code>~/.local/share/applications/clipfarm.desktop</code>.</p>
+        <p class="muted"><strong>Windows:</strong> Nastavení → Aplikace → ClipFarm → Odinstalovat. Jestli smazat i klipy, se zeptá (výchozí je nechat). <strong>Linux:</strong> smaž složku ClipFarm a <code>~/.local/<wbr />share/<wbr />applications/<wbr />clipfarm.desktop</code>.</p>
       </article>
     </div>
   </section>
@@ -148,7 +150,7 @@ import { url, latest, hasDownload } from '../lib/site.ts';
         <h2>Připraveno?</h2>
         <p class="muted">Něco nejde? Mrkni do <a href={url('napoveda/')}>nápovědy</a>.</p>
       </div>
-      {hasDownload ? <DownloadButton /> : <a class="btn btn-ghost btn-big" href="#windows">Zpět na stažení <Icon name="arrow" size={20} /></a>}
+      {hasDownload ? <DownloadButton /> : contactUrl ? <a class="btn btn-go btn-big" href={contactUrl} rel="noopener">Napsat správci <Icon name="arrow" size={20} /></a> : <a class="btn btn-ghost btn-big" href={url('jak-to-funguje/')}>Jak ClipFarm funguje <Icon name="arrow" size={20} /></a>}
     </div>
   </section>
 </Base>
@@ -192,6 +194,19 @@ import { url, latest, hasDownload } from '../lib/site.ts';
   td { color: var(--soft); }
   tbody tr:last-child > * { border-bottom: 0; }
   tbody tr:hover { background: rgba(21, 28, 24, 0.6); }
+  .illus { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  @media (max-width: 700px) {
+    .table-wrap { overflow: visible; border: 0; }
+    table { min-width: 0; }
+    thead { display: none; }
+    tbody, tr, th, td { display: block; }
+    tbody { display: grid; gap: 12px; }
+    tr { border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px; background: var(--surface); }
+    tbody th { width: auto; padding: 0 0 6px; border: 0; color: var(--text); font-family: var(--disp); font-size: 1.05rem; }
+    td { padding: 6px 0; border: 0; }
+    td::before { content: attr(data-os); display: block; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--go); font-weight: 700; }
+    tbody tr:hover { background: var(--surface); }
+  }
   .end-cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: clamp(24px, 4vw, 40px); border-radius: 24px; border: 1px solid rgba(94, 224, 138, 0.25); background: radial-gradient(500px 200px at 0% 0%, rgba(94, 224, 138, 0.12), transparent 70%), var(--surface); }
   .end-cta > div { display: grid; gap: 6px; }
   @media (max-width: 900px) {

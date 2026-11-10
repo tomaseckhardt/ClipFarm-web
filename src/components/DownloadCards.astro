@@ -1,12 +1,12 @@
 ---
-// Karty Windows / Linux se systémovými požadavky (úvod i stránka Stažení).
+// Karty Windows / Linux (úvod: compact = Linux jen stručně; stránka Stažení: celé).
 import DownloadButton from './DownloadButton.astro';
 import Icon from './Icon.astro';
-import { hasDownload, latest, url } from '../lib/site.ts';
+import { hasDownload, contactUrl, latest, url } from '../lib/site.ts';
 interface Props { onDownloadPage?: boolean }
 const { onDownloadPage = false } = Astro.props;
 ---
-<div class="dl-grid">
+<div class:list={['dl-grid', { compact: !onDownloadPage }]}>
   <article class="card dl-card win spot" id={onDownloadPage ? 'windows' : undefined} data-reveal>
     <div class="dl-top">
       <span class="os-icon"><Icon name="windows" size={26} /></span>
@@ -17,21 +17,22 @@ const { onDownloadPage = false } = Astro.props;
       <span class="chip trial">14 dní zdarma</span>
     </div>
     <ul class="ticks">
-      <li>Nic dalšího neinstaluješ: yt-dlp, ffmpeg i Node.js jsou přibalené.</li>
-      <li>Instaluje se jen pro tebe, bez admina. Ikona na ploše a v nabídce Start.</li>
-      <li>Klipy v <code>Dokumenty\ClipFarm</code>. Aktualizace jedním klikem.</li>
-      <li>Přihlášení přes Discord, pak 14 dní celý ClipFarm. Žádná kreditka.</li>
+      <li>Normální program s instalačkou. Nic dalšího neinstaluješ, všechno potřebné má s sebou.</li>
+      <li>Instaluje se jen pro tebe, bez administrátorských práv. Ikona na ploše a v nabídce Start.</li>
+      <li>Přihlášení přes Discord, pak 14 dní celý ClipFarm. Žádná kreditka, žádný vodoznak.</li>
+      <li>Aktualizace jedním klikem. Klipy zůstávají v Dokumentech.</li>
     </ul>
     <div class="dl-actions">
       {onDownloadPage && !hasDownload ? (
         <div class="pending" role="note">
-          <strong>Instalačku ti zatím pošle správce.</strong>
-          <span class="muted small">Stahuje se z GitHub Releases soukromého repa – kdo k němu nemá přístup, dostane ClipFarm-Setup.exe od správce.</span>
+          <strong>Veřejný odkaz ke stažení tu zatím není.</strong>
+          <span class="muted small">Instalačku ClipFarm-Setup.exe zatím posílá správce ClipFarmu – je v soukromém repozitáři na GitHubu.{contactUrl && ' Napiš mu a pošle ti ji.'}</span>
+          {contactUrl && <a class="btn btn-go btn-sm" href={contactUrl} rel="noopener">Napsat správci <Icon name="arrow" size={18} /></a>}
         </div>
       ) : (
-        <DownloadButton label="Stáhnout pro Windows" />
+        <DownloadButton />
       )}
-      <p class="muted small warn"><Icon name="shield" size={16} /><span>Windows napoprvé varuje (instalačka není podepsaná): <strong>Další informace → Přesto spustit</strong>.</span></p>
+      <p class="muted small warn"><Icon name="shield" size={16} /><span>Windows napoprvé varuje, protože instalačka není podepsaná: <strong>Další informace → Přesto spustit</strong>.</span></p>
     </div>
   </article>
 
@@ -40,14 +41,14 @@ const { onDownloadPage = false } = Astro.props;
       <span class="os-icon"><Icon name="linux" size={26} /></span>
       <div>
         <h3>Linux</h3>
-        <p class="muted small">z gitu · instalace-linux.sh</p>
+        <p class="muted small">zatím jen pro pozvané · z gitu</p>
       </div>
     </div>
     <ul class="ticks">
       <li>Fedora 41+, Ubuntu 24.04+, Debian 13+, Arch.</li>
-      <li>Potřebuje Python 3.12+, yt-dlp, ffmpeg a Node.js 22+ – instalační skript doinstaluje, co chybí.</li>
-      <li>Ikona v nabídce aplikací (Super → ClipFarm), aktualizace přes git jedním tlačítkem.</li>
-      <li>Repo je soukromé: <code>git clone</code> jen pro collaborators. Bez přihlášení.</li>
+      {onDownloadPage && <li>Potřebuje Python 3.12+, yt-dlp, ffmpeg a Node.js 22+ – instalační skript doinstaluje, co chybí.</li>}
+      {onDownloadPage && <li>Ikona v nabídce aplikací (Super → ClipFarm), aktualizace přes git jedním tlačítkem.</li>}
+      <li>Instaluje se z gitu a repozitář je soukromý: přístup ti dá správce ClipFarmu. Bez přihlášení.</li>
     </ul>
     <div class="dl-actions">
       <a class="btn btn-ghost btn-big" href={onDownloadPage ? '#instalace-linux' : url('stazeni/#instalace-linux')}>
@@ -60,6 +61,7 @@ const { onDownloadPage = false } = Astro.props;
 
 <style>
   .dl-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; }
+  .dl-grid.compact { grid-template-columns: 1.5fr 1fr; }
   .dl-card { display: grid; gap: 22px; align-content: start; }
   .dl-card.win { border-color: rgba(94, 224, 138, 0.3); background: linear-gradient(160deg, #17231c, var(--surface) 55%); }
   .dl-top { display: flex; gap: 16px; align-items: center; }
@@ -75,7 +77,7 @@ const { onDownloadPage = false } = Astro.props;
   .dl-actions { display: grid; gap: 12px; justify-items: start; margin-top: auto; }
   .warn { display: flex; gap: 8px; align-items: flex-start; }
   .warn :global(svg) { flex: none; margin-top: 3px; color: var(--wait); }
-  .pending { display: grid; gap: 4px; padding: 14px 16px; border-radius: 14px; border: 1px dashed rgba(94, 224, 138, 0.45); background: rgba(94, 224, 138, 0.06); }
-  @media (max-width: 860px) { .dl-grid { grid-template-columns: 1fr; } }
+  .pending { display: grid; gap: 8px; justify-items: start; padding: 14px 16px; border-radius: 14px; border: 1px dashed rgba(94, 224, 138, 0.45); background: rgba(94, 224, 138, 0.06); }
+  @media (max-width: 860px) { .dl-grid, .dl-grid.compact { grid-template-columns: 1fr; } }
   @media (max-width: 420px) { .dl-top { flex-wrap: wrap; } .trial { margin-left: 0; } }
 </style>

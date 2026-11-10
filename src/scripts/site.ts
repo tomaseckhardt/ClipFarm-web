@@ -21,8 +21,9 @@ addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
 // videa: přehrávat jen když jsou vidět; pozastavit mimo obraz; s „omezit pohyb“ / šetřením dat nespouštět samo
-const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
-const autoplayOK = () => !reduce.matches && !saveData;
+const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+const slowNet = conn?.saveData === true || /(^|-)2g|3g/.test(conn?.effectiveType ?? '');
+const autoplayOK = () => !reduce.matches && !slowNet;
 const players = [...document.querySelectorAll<HTMLElement>('.player')];
 
 const videoIO = new IntersectionObserver(
@@ -130,4 +131,18 @@ if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
     card.style.setProperty('--mx', `${e.clientX - r.left}px`);
     card.style.setProperty('--my', `${e.clientY - r.top}px`);
   }, { passive: true });
+}
+
+// „Poslat si odkaz do PC“: na mobilu (CSS ukazuje jen na úzkých displejích) sdílení, jinak zkopírovat odkaz
+const shareBox = document.querySelector<HTMLElement>('[data-share-box]');
+if (shareBox) {
+  shareBox.hidden = false;
+  shareBox.querySelector<HTMLButtonElement>('[data-share]')?.addEventListener('click', async (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    const link = location.href.split('#')[0];
+    try {
+      if (navigator.share) await navigator.share({ title: 'ClipFarm', text: 'ClipFarm – automatické klipy ze streamů. Mrkni na to na počítači:', url: link });
+      else { await navigator.clipboard.writeText(link); btn.textContent = 'Odkaz zkopírovaný ✓'; }
+    } catch { /* sdílení zrušené */ }
+  });
 }

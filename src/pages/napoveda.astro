@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import FaqList from '../components/FaqList.astro';
 import Icon from '../components/Icon.astro';
 import { FAQ } from '../lib/faq.ts';
-import { url } from '../lib/site.ts';
+import { url, contactUrl } from '../lib/site.ts';
 ---
 <Base title="Nápověda" description="Časté otázky o ClipFarmu: zkušební verze, instalace, jak vybírá momenty, co dělat, když něco nejde, a omezení.">
   <section class="page-hero">
@@ -15,7 +15,7 @@ import { url } from '../lib/site.ts';
       <div class="search enter" style="--i: 3">
         <label for="faq-q" class="sr">Hledat v nápovědě</label>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
-        <input id="faq-q" type="search" placeholder="Hledat, třeba „chat“, „Kick“ nebo „SmartScreen“" autocomplete="off" />
+        <input id="faq-q" type="search" placeholder="Hledat, třeba „Kick“ nebo „chat“" autocomplete="off" />
       </div>
       <p class="muted small" id="faq-none" role="status" hidden>Nic jsme nenašli. Zkus jiné slovo, nebo projdi témata níž.</p>
     </div>
@@ -36,7 +36,8 @@ import { url } from '../lib/site.ts';
       ))}
       <div class="card still" data-reveal>
         <h2>Pořád nic?</h2>
-        <p class="muted">V ClipFarmu dej <strong>Nastavení → Uložit diagnostiku</strong> a ZIP pošli správci. Jsou v něm logy a popis systému – bez videí a bez přihlašovacích údajů.</p>
+        <p class="muted">V ClipFarmu dej <strong>Nastavení → Uložit diagnostiku</strong> a ZIP pošli správci ClipFarmu. Jsou v něm logy a popis systému – bez videí a bez přihlašovacích údajů.</p>
+        {contactUrl && <a class="btn btn-go btn-sm" href={contactUrl} rel="noopener">Napsat správci</a>}
         <a class="link" href={url('jak-to-funguje/')}>Jak ClipFarm funguje do hloubky <Icon name="arrow" size={16} /></a>
       </div>
     </div>
@@ -87,7 +88,7 @@ import { url } from '../lib/site.ts';
   .groups { display: grid; gap: 48px; }
   .group { display: grid; gap: 18px; scroll-margin-top: calc(var(--header-h) + 16px); }
   .group h2 { font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem); }
-  .still { display: grid; gap: 12px; }
+  .still { display: grid; gap: 12px; justify-items: start; }
   .still h2 { font-size: 1.6rem; }
   .link { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; text-decoration: none; min-height: 44px; }
   @media (max-width: 860px) {

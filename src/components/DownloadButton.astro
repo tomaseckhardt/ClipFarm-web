@@ -1,10 +1,11 @@
 ---
 // Tlačítko „Stáhnout“: odkaz bere jen z DOWNLOAD_URL (site.config.mjs) přes downloadHref.
+// Dokud odkaz není, vede na stránku Stažení a jmenuje se „Jak získat ClipFarm“ (neslibuje soubor, který není).
 import Icon from './Icon.astro';
-import { downloadHref, hasDownload } from '../lib/site.ts';
-interface Props { label?: string; size?: 'big' | 'sm' | 'md'; class?: string }
-const { label = 'Stáhnout pro Windows', size = 'big', class: cls } = Astro.props;
+import { downloadHref, downloadLabel, hasDownload } from '../lib/site.ts';
+interface Props { size?: 'big' | 'sm' | 'md'; class?: string }
+const { size = 'big', class: cls } = Astro.props;
 ---
 <a class:list={['btn btn-go', { 'btn-big': size === 'big', 'btn-sm': size === 'sm' }, cls]} href={downloadHref} data-download={hasDownload ? 'file' : 'page'}>
-  <Icon name="download" size={size === 'sm' ? 18 : 22} />{label}
+  <Icon name={hasDownload ? 'download' : 'arrow'} size={size === 'sm' ? 18 : 22} />{downloadLabel}
 </a>

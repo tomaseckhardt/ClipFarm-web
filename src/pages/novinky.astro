@@ -5,7 +5,16 @@ import DownloadButton from '../components/DownloadButton.astro';
 import { releases, latest } from '../lib/site.ts';
 import { inline, czDate } from '../lib/changelog.ts';
 
+import type { Release } from '../lib/changelog.ts';
+
 const LABEL = { new: 'Nové', fix: 'Opravy', removed: 'Odebráno', topic: '' } as const;
+const OPEN = 1; // tolik nejnovějších verzí je rozbalených, starší mají změny pod „Zobrazit změny“
+const first = releases[releases.length - 1];
+const days = first.date && latest.date ? Math.round((Date.parse(latest.date) - Date.parse(first.date)) / 864e5) : null;
+const count = (r: Release) => r.groups.reduce((n, g) => n + g.items.length, 0);
+const groupsHtml = (r: Release) => r.groups.map((g) =>
+  `<section class="group">${g.title ? `<h3 class="g-title ${g.kind}">${inline(g.kind === 'topic' ? g.title : LABEL[g.kind])}</h3>` : ''}` +
+  `<ul>${g.items.map((it) => `<li>${inline(it)}</li>`).join('')}</ul></section>`).join('');
 ---
 <Base title="Novinky" description={`Co přinesla která verze ClipFarmu. Nejnovější je ${latest.version}. Changelog generovaný přímo z aplikace.`}>
   <section class="page-hero">
@@ -15,7 +24,11 @@ const LABEL = { new: 'Nové', fix: 'Opravy', removed: 'Odebráno', topic: '' } a
       <h1 class="enter" style="--i: 1">Co je nového</h1>
       <p class="lead enter" style="--i: 2">
         Co přinesla která verze, nejnovější nahoře. Stejný přehled ti ClipFarm ukáže po každé aktualizaci.
-        Opravy zvyšují poslední číslo verze, nové funkce prostřední.
+      </p>
+      <p class="stats enter" style="--i: 3">
+        <span><strong>{releases.length}</strong> verzí</span>
+        {days !== null && <span>za <strong>{days}</strong> dní</span>}
+        {latest.date && <span>poslední {czDate(latest.date)}</span>}
       </p>
     </div>
   </section>
@@ -41,18 +54,12 @@ const LABEL = { new: 'Nové', fix: 'Opravy', removed: 'Odebráno', topic: '' } a
               {r.date && <time datetime={r.date} class="muted">{czDate(r.date)}</time>}
             </header>
             {r.intro.map((p) => <p class="intro" set:html={inline(p)} />)}
-            {r.groups.map((g) => (
-              <section class="group">
-                {g.title && (
-                  <h3 class:list={['g-title', g.kind]}>
-                    {g.kind === 'topic' ? g.title : LABEL[g.kind]}
-                  </h3>
-                )}
-                <ul>
-                  {g.items.map((item) => <li set:html={inline(item)} />)}
-                </ul>
-              </section>
-            ))}
+            {i < OPEN ? <Fragment set:html={groupsHtml(r)} /> : (
+              <details class="more">
+                <summary>Zobrazit změny <span>{count(r)}</span></summary>
+                <div class="more-body" set:html={groupsHtml(r)} />
+              </details>
+            )}
           </article>
         </li>
       ))}
@@ -67,7 +74,20 @@ const LABEL = { new: 'Nové', fix: 'Opravy', removed: 'Odebráno', topic: '' } a
   </section>
 </Base>
 
+<script>
+  const openTarget = () => {
+    const el = location.hash ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+    const d = el?.querySelector('details.more');
+    if (d instanceof HTMLDetailsElement) d.open = true;
+  };
+  addEventListener('hashchange', openTarget);
+  openTarget();
+</script>
+
 <style>
+  .stats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .stats span { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line2); background: var(--surface); color: var(--soft); font-size: 0.92rem; }
+  .stats strong { color: var(--go); font-family: var(--disp); font-size: 1.05rem; }
   .layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; padding-bottom: 40px; }
   .toc { position: sticky; top: calc(var(--header-h) + 20px); max-height: calc(100vh - var(--header-h) - 40px); overflow-y: auto; }
   .toc-title { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
@@ -88,14 +108,25 @@ const LABEL = { new: 'Nové', fix: 'Opravy', removed: 'Odebráno', topic: '' } a
   .now { color: var(--go); border-color: rgba(94, 224, 138, 0.4); font-size: 0.8rem; padding: 3px 10px; }
   .rel-head time { margin-left: auto; font-size: 0.92rem; }
   .intro { font-size: 1.08rem; color: var(--text); }
-  .group { display: grid; gap: 10px; }
-  .g-title { font-family: inherit; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; justify-self: start; padding: 3px 10px; border-radius: 8px; background: var(--field); color: var(--soft); }
-  .g-title.new { background: rgba(94, 224, 138, 0.14); color: var(--go); }
-  .g-title.fix { background: rgba(255, 179, 92, 0.14); color: var(--wait); }
-  .g-title.removed { background: rgba(255, 107, 107, 0.12); color: #ff9c9c; }
-  .g-title.topic { text-transform: none; letter-spacing: 0; font-size: 0.95rem; }
-  .group ul { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; color: var(--soft); }
-  .group li::marker { color: var(--go); }
+  .card :global(.group) { display: grid; gap: 10px; }
+  .card :global(.g-title) { font-family: inherit; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 800; justify-self: start; padding: 3px 10px; border-radius: 8px; background: var(--field); color: var(--soft); }
+  .card :global(.g-title.new) { background: rgba(94, 224, 138, 0.14); color: var(--go); }
+  .card :global(.g-title.fix) { background: rgba(255, 179, 92, 0.14); color: var(--wait); }
+  .card :global(.g-title.removed) { background: rgba(255, 107, 107, 0.12); color: #ff9c9c; }
+  .card :global(.g-title.topic) { text-transform: none; letter-spacing: 0; font-size: 0.95rem; }
+  .card :global(.group ul) { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; color: var(--soft); }
+  .card :global(.group li::marker) { color: var(--go); }
+  .more summary {
+    cursor: pointer; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px; border-radius: 12px;
+    border: 1px solid var(--line2); background: var(--field); font-weight: 650; list-style: none; transition: border-color 0.2s;
+  }
+  .more summary::-webkit-details-marker { display: none; }
+  .more summary:hover { border-color: var(--go); }
+  .more summary span { font-size: 0.8rem; color: var(--muted); background: var(--bg); border-radius: 99px; padding: 0 8px; }
+  .more summary::after { content: ''; width: 8px; height: 8px; border-right: 2px solid var(--go); border-bottom: 2px solid var(--go); transform: rotate(45deg) translateY(-2px); transition: transform 0.25s var(--ease); }
+  .more[open] summary::after { transform: rotate(225deg); }
+  .more[open] summary { margin-bottom: 16px; }
+  .more-body { display: grid; gap: 16px; }
   .end { padding-block: 20px 60px; }
   .end-card { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; justify-content: space-between; padding: 24px 28px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); }
   @media (max-width: 860px) {
@@ -104,8 +135,8 @@ const LABEL = { new: 'Nové', fix: 'Opravy', removed: 'Odebráno', topic: '' } a
     .toc ul { display: flex; flex-wrap: wrap; gap: 6px; }
     .toc a { border: 1px solid var(--line2); border-radius: 999px; padding: 6px 12px; min-height: 40px; align-items: center; }
     .toc a span { display: none; }
-    .releases { padding-left: 22px; }
-    .rel-dot { left: -22px; }
-    .releases::before { left: 4px; }
+    .releases { padding-left: 0; gap: 16px; }
+    .rel-dot, .releases::before { display: none; }
+    .card { padding: 18px; }
   }
 </style>

@@ -1,0 +1,85 @@
+---
+// Kalkulačka: kolik hodin streamu týdně / měsíčně by člověk musel projet a kolik místa zabere zdroj.
+// Jen násobení: GB za hodinu podle kvality jsou z README ClipFarmu (720p ~1,5 · 1080p ~3,5 · 1440p ~6,5).
+const GB = { 720: 1.5, 1080: 3.5, 1440: 6.5 };
+const H = 3, N = 4, Q = 1080;
+const fmt = (n: number) => n.toLocaleString('cs-CZ', { maximumFractionDigits: 0 });
+---
+<div class="calc" data-calc data-gb={JSON.stringify(GB)}>
+  <div class="calc-in">
+    <label class="row-in">
+      <span class="lab">Jak dlouhý je stream <output data-out="h">{H} h</output></span>
+      <input type="range" min="1" max="12" step="1" value={H} data-in="h" aria-valuetext={`${H} hodiny`} />
+    </label>
+    <label class="row-in">
+      <span class="lab">Kolik streamů týdně <output data-out="n">{N}</output></span>
+      <input type="range" min="1" max="14" step="1" value={N} data-in="n" aria-valuetext={`${N} streamy`} />
+    </label>
+    <fieldset class="row-in q">
+      <legend class="lab">Kvalita nahrávání</legend>
+      <div class="seg">
+        {Object.keys(GB).map((q) => (
+          <label><input type="radio" name="calc-q" value={q} checked={Number(q) === Q} data-in="q" /><span>{q}p</span></label>
+        ))}
+      </div>
+    </fieldset>
+  </div>
+  <div class="calc-out" aria-live="polite">
+    <div class="big">
+      <span class="num" data-res="week">{fmt(H * N)}</span><span class="unit">h streamu týdně</span>
+    </div>
+    <p class="sub">to je <strong data-res="month">{fmt(H * N * 4.35)} h</strong> měsíčně, které bys musel projet, abys našel pointy. ClipFarm je najde podle chatu a hlasitosti – klidně v noci, zatímco spíš.</p>
+    <p class="disk">Zdrojové video zabere zhruba <strong data-res="disk">{fmt(H * N * GB[Q])} GB</strong> týdně. Zdroje starší než 30 dní ClipFarm nabídne smazat, klipy zůstanou.</p>
+  </div>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-calc]')) {
+    const gb = JSON.parse(root.dataset.gb ?? '{}') as Record<string, number>;
+    const h = root.querySelector<HTMLInputElement>('[data-in="h"]')!;
+    const n = root.querySelector<HTMLInputElement>('[data-in="n"]')!;
+    const fmt = (x: number) => x.toLocaleString('cs-CZ', { maximumFractionDigits: 0 });
+    const hours = (x: number) => (x === 1 ? 'hodina' : x <= 4 ? 'hodiny' : 'hodin');
+    const streams = (x: number) => (x === 1 ? 'stream' : x <= 4 ? 'streamy' : 'streamů');
+    const set = (sel: string, text: string) => { root.querySelector(sel)!.textContent = text; };
+    const render = () => {
+      const H = Number(h.value), N = Number(n.value);
+      const q = root.querySelector<HTMLInputElement>('[data-in="q"]:checked')?.value ?? '1080';
+      set('[data-out="h"]', `${H} h`);
+      set('[data-out="n"]', String(N));
+      h.setAttribute('aria-valuetext', `${H} ${hours(H)}`);
+      n.setAttribute('aria-valuetext', `${N} ${streams(N)}`);
+      set('[data-res="week"]', fmt(H * N));
+      set('[data-res="month"]', `${fmt(H * N * 4.35)} h`);
+      set('[data-res="disk"]', `${fmt(H * N * gb[q])} GB`);
+    };
+    root.addEventListener('input', render);
+    render();
+  }
+</script>
+
+<style>
+  .calc {
+    display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 48px); align-items: center;
+    padding: clamp(22px, 4vw, 40px); border-radius: 28px; border: 1px solid var(--line);
+    background: radial-gradient(500px 260px at 100% 0%, rgba(255, 179, 92, 0.1), transparent 70%), var(--surface);
+  }
+  .calc-in { display: grid; gap: 22px; }
+  .row-in { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
+  .lab { font-weight: 650; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 0; }
+  .lab output { font-family: var(--disp); font-weight: 800; font-size: 1.3rem; color: var(--wait); font-variant-numeric: tabular-nums; }
+  input[type='range'] { width: 100%; accent-color: var(--wait); height: 32px; cursor: pointer; }
+  .seg { display: inline-flex; gap: 4px; padding: 4px; background: var(--bg-deep); border: 1px solid var(--line); border-radius: 999px; margin-top: 8px; }
+  .seg label { position: relative; }
+  .seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .seg span { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 999px; font-weight: 650; color: var(--muted); transition: background-color 0.2s, color 0.2s; }
+  .seg input:checked + span { background: var(--text); color: var(--bg); }
+  .seg input:focus-visible + span { outline: 3px solid var(--go); outline-offset: 2px; }
+  .calc-out { display: grid; gap: 14px; }
+  .big { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .num { font-family: var(--disp); font-weight: 800; font-size: clamp(3.4rem, 2rem + 5vw, 5.5rem); line-height: 0.9; letter-spacing: -0.04em; color: var(--wait); font-variant-numeric: tabular-nums; }
+  .unit { font-family: var(--disp); font-weight: 700; font-size: 1.3rem; }
+  .sub { color: var(--soft); font-size: 1.05rem; }
+  .disk { color: var(--muted); font-size: 0.92rem; padding-top: 12px; border-top: 1px solid var(--line); }
+  @media (max-width: 760px) { .calc { grid-template-columns: 1fr; } }
+</style>

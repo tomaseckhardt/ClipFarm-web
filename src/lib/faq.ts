@@ -20,10 +20,11 @@ export const FAQ: FaqGroup[] = [
         id: 'zdarma',
         q: 'Je ClipFarm zdarma?',
         home: true,
-        a: `<p>Nový účet má <strong>14 dní zkušební verze</strong>: celý ClipFarm, žádné ořezané funkce, žádný vodoznak,
-          žádná kreditka. Nahoře v okně svítí „Zkušební verze · zbývá N dní“, ať tě konec nepřekvapí.</p>
-          <p>Po zkušební době okno nabídne <strong>Mám zájem o přístup</strong> – správce to uvidí a přístup ti povolí.
-          Klipy ze zkušební doby nikam nemizí.</p>`,
+        a: `<p><strong>Prvních 14 dní ano.</strong> Nový účet dostane celý ClipFarm na zkoušku: žádné ořezané funkce,
+          žádný vodoznak, žádná kreditka. Nahoře v okně svítí „Zkušební verze · zbývá N dní“, ať tě konec nepřekvapí.</p>
+          <p>Potom přístup povoluje správce ClipFarmu: okno nabídne <strong>Mám zájem o přístup</strong>, správce to uvidí
+          a přístup ti povolí – natrvalo, nebo na dobu určitou (třeba po měsících). Cenu tenhle web neuvádí, zeptej se
+          správce. Klipy ze zkušební doby ti zůstanou v každém případě.</p>`,
       },
       {
         id: 'system',
@@ -40,13 +41,14 @@ export const FAQ: FaqGroup[] = [
         q: 'Windows při instalaci varuje. Je to v pořádku?',
         home: true,
         a: `<p>Ano. Instalačka není podepsaná, proto Windows SmartScreen napoprvé varuje. Klikni na
-          <strong>Další informace → Přesto spustit</strong>. Instaluje se jen pro tebe, bez práv správce.</p>`,
+          <strong>Další informace → Přesto spustit</strong>. Instaluje se jen pro tebe, bez administrátorských práv.</p>`,
       },
       {
         id: 'discord',
         q: 'Proč se přihlašuju přes Discord?',
-        a: `<p>ClipFarm.exe při prvním spuštění chce přihlášení přes Discord – žádné další heslo do sbírky. Přístup
-          ověří při každém spuštění a pak každých 6 hodin.</p>
+        a: `<p>ClipFarm.exe při prvním spuštění chce přihlášení přes Discord – žádné další heslo do sbírky. Přihlašuješ
+          se přímo na stránce Discordu, heslo ClipFarm nevidí. Správce pak v přehledu přístupů vidí tvůj e-mail a jméno
+          z Discordu, aby věděl, komu přístup povoluje. Přístup ověří při každém spuštění a pak každých 6 hodin.</p>
           <p>Bez internetu funguje normálně ještě 3 dny od posledního ověření, potom jen galerie, střih a přestříhání
           (stahování a nahrávání zase po připojení). Gitová verze na Linuxu přihlášení nemá.</p>`,
       },
@@ -207,10 +209,25 @@ export const FAQ: FaqGroup[] = [
       {
         id: 'bez-chatu',
         q: 'Funguje to i u videí bez chatu?',
-        home: true,
         a: `<p>Ano, ale slaběji. Bez chatu (YouTube reuploady, nahraná videa) rozhoduje jen zvuk, takže limit skóre
           sniž (třeba na 1,5) – správnou hodnotu ukáže tabulka limitů v kartě Streamy. U YouTube videí s
           „nejpřehrávanějšími“ úseky (do zhruba 50 min) pomůže i heatmapa YouTube.</p>`,
+      },
+      {
+        id: 'twitch',
+        q: 'Funguje to s Twitchem?',
+        home: true,
+        a: `<p>Twitch mezi podporovanými zdroji není. ClipFarm umí <strong>YouTube</strong> (videa i záznamy streamů)
+          a <strong>Kick</strong> (živé streamy, hlídání kanálu a některé záznamy). Vlastní video zpracuje taky – viz
+          otázka o záznamu z OBS.</p>`,
+      },
+      {
+        id: 'obs',
+        q: 'Můžu použít vlastní záznam streamu (třeba z OBS)?',
+        a: `<p>Ano. Dej video do složky streamu jako <code>stream.mp4</code>
+          (<code>klipy/&lt;kanál&gt;/&lt;datum – název&gt;/</code>, u ClipFarm.exe v <code>Dokumenty\\ClipFarm</code>)
+          a v okně dej <strong>✂ Přestříhat</strong>. Bez chatu ale rozhoduje jen zvuk, takže limit skóre sniž
+          (třeba na 1,5).</p>`,
       },
       {
         id: 'kick-vod',

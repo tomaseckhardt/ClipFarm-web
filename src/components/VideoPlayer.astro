@@ -1,24 +1,25 @@
 ---
 // Video: muted, playsinline, loop, preload="metadata", poster z brag.jpg. Spouští se, až je vidět (site.ts),
 // mimo obraz se pozastaví. Tlačítka: přehrát/pozastavit a zvuk (zapnutí zvuku ztlumí ostatní videa).
+// mobileSrc = menší verze pro úzké displeje (scripts/optimize-videos.sh).
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import Icon from './Icon.astro';
 
 interface Props {
-  src: string; poster: ImageMetadata; label: string; description: string;
+  src: string; mobileSrc?: string; poster: ImageMetadata; label: string; description: string;
   vertical?: boolean; class?: string; id?: string;
 }
-const { src, poster, label, description, vertical = false, class: cls, id } = Astro.props;
+const { src, mobileSrc, poster, label, description, vertical = false, class: cls, id } = Astro.props;
 const p = await getImage({ src: poster, width: vertical ? 540 : 1280, format: 'webp', quality: 78 });
 const descId = `${id ?? src.replace(/\W+/g, '-')}-desc`;
 ---
 <figure class:list={['player', { vertical }, cls]} id={id}>
   <video
-    src={src} poster={p.src} width={p.attributes.width} height={p.attributes.height}
+    src={mobileSrc ? undefined : src} poster={p.src} width={p.attributes.width} height={p.attributes.height}
     muted playsinline loop preload="metadata" data-autoplay
     aria-label={label} aria-describedby={descId}
-  ></video>
+  >{mobileSrc && <source src={mobileSrc} media="(max-width: 700px)" type="video/mp4" />}{mobileSrc && <source src={src} type="video/mp4" />}</video>
   <p class="sr" id={descId}>{description}</p>
   <div class="controls">
     <button type="button" class="ctl" data-act="play" aria-label="Přehrát video">
@@ -54,4 +55,10 @@ const descId = `${id ?? src.replace(/\W+/g, '-')}-desc`;
   .ctl-sound[aria-pressed='true'] .i-sound { display: inline-flex; }
   .i-play, .i-mute { display: inline-flex; }
   .vertical .ctl-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  /* malé video (mobil): jen ikony v rohu, ať nekryjí obsah */
+  @media (max-width: 640px) {
+    .controls { left: auto; right: 8px; bottom: 8px; gap: 6px; }
+    .ctl { height: 34px; min-width: 34px; padding: 0 8px; border-radius: 10px; }
+    .ctl-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  }
 </style>

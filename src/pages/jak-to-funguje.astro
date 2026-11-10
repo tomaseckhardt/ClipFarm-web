@@ -19,14 +19,9 @@ const maxN = Math.max(...table.map((r) => r.n));
       <h1 class="enter" style="--i: 1">Jak ClipFarm pozná, že se něco stalo</h1>
       <p class="lead enter" style="--i: 2">
         Žádná černá skříňka. ClipFarm poslouchá ty, kdo to vědí nejlíp: diváky v chatu
-        a hlasitost streamu. Tady je přesně jak.
+        a&nbsp;hlasitost streamu. Tady je přesně jak.
       </p>
-      <ol class="pipeline enter" style="--i: 3" aria-label="Fáze úlohy">
-        <li><span>1</span>Stahování / nahrávání</li>
-        <li><span>2</span>Analýza</li>
-        <li><span>3</span>Stříhání</li>
-        <li><span>4</span>Hotovo</li>
-      </ol>
+      <p class="tldr enter" style="--i: 3"><span>Ve zkratce:</span> chat a hlasitost <b>→</b> skóre každé sekundy <b>→</b> klip z každého výrazného momentu, typicky 20–60 s</p>
     </div>
   </section>
 
@@ -53,7 +48,7 @@ const maxN = Math.max(...table.map((r) => r.n));
   <!-- 2. SKÓRE -->
   <section class="wrap block" id="skore" aria-labelledby="h-score">
     <div class="head"><span class="num">2</span><h2 id="h-score">Každá sekunda dostane skóre</h2></div>
-    <p class="lead narrow-text" data-reveal>Skóre říká, o kolik <strong>směrodatných odchylek</strong> (σ) je moment výraznější než běžný stav streamu. Jinými slovy: ne „kolik lidí píše“, ale „o kolik víc píšou než obvykle“.</p>
+    <p class="lead narrow-text" data-reveal>Skóre neříká „kolik lidí píše“, ale <strong>o kolik víc píšou a křičí než obvykle</strong> v tomhle streamu. (Pro matematiky: o kolik směrodatných odchylek je moment výraznější než běžný stav.) Horní hranici nemá – velká reakce klidně přeskočí 10.</p>
 
     <div class="signals">
       <article class="card sig" data-reveal>
@@ -103,8 +98,8 @@ const maxN = Math.max(...table.map((r) => r.n));
         <tbody>
           {table.map((r) => (
             <tr class:list={{ cur: r.l === DEFAULT_LIMIT }}>
-              <th scope="row">{cz(r.l)}</th>
-              <td><span class="lim-bar" style={`--w: ${(r.n / maxN) * 100}%`}></span><span class="lim-n">{r.n}</span></td>
+              <th scope="row">{cz(r.l)}{r.l === DEFAULT_LIMIT && <span class="def">výchozí</span>}</th>
+              <td><span class="lim-bar" style={`--w: ${(r.n / maxN) * 80}%`}></span><span class="lim-n">{r.n}</span></td>
             </tr>
           ))}
         </tbody>
@@ -199,17 +194,16 @@ const maxN = Math.max(...table.map((r) => r.n));
 </Base>
 
 <style>
+  .tldr { margin-top: 26px; display: inline-flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 12px 18px; border-radius: 16px; border: 1px solid rgba(94, 224, 138, 0.3); background: rgba(94, 224, 138, 0.06); color: var(--soft); }
+  .tldr span { color: var(--go); font-weight: 700; }
+  .tldr b { color: var(--wait); }
   .block { padding-block: clamp(36px, 5vw, 72px); }
-  .pipeline { list-style: none; margin: 32px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
-  .pipeline li { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 8px 8px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line2); font-weight: 650; font-size: 0.95rem; }
-  .pipeline li + li { position: relative; margin-left: 22px; }
-  .pipeline li + li::before { content: '→'; position: absolute; left: -24px; color: var(--muted); }
-  .pipeline span { width: 26px; height: 26px; border-radius: 99px; display: grid; place-items: center; background: rgba(94, 224, 138, 0.15); color: var(--go); font-size: 0.85rem; font-weight: 800; }
   .head { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
   .head h2 { font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.7rem); }
   .num { flex: none; width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-family: var(--disp); font-weight: 800; font-size: 1.4rem; color: var(--go-text); background: var(--go); }
   .narrow-text { max-width: 760px; margin-bottom: 28px; }
   .cards3, .signals, .after, .fmts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .after { align-items: start; }
   .card { display: grid; gap: 12px; align-content: start; }
   .note { margin-top: 18px; }
   .sig ul { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; color: var(--soft); }
@@ -225,13 +219,13 @@ const maxN = Math.max(...table.map((r) => r.n));
   .lim-table { width: 100%; border-collapse: collapse; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
   .lim-table th, .lim-table td { padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--line); }
   .lim-table thead th { background: var(--surface); font-size: 0.85rem; color: var(--muted); }
-  .lim-table tbody th { width: 90px; font-variant-numeric: tabular-nums; }
+  .lim-table tbody th { width: 150px; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .lim-table td { display: flex; align-items: center; gap: 12px; }
-  .lim-bar { height: 10px; width: var(--w); border-radius: 99px; background: #5b4a33; flex: 0 0 auto; max-width: 80%; }
+  .lim-bar { height: 10px; width: var(--w); border-radius: 99px; background: #5b4a33; flex: 0 0 auto; }
   .lim-n { font-weight: 800; font-variant-numeric: tabular-nums; }
   .lim-table tr.cur { background: rgba(255, 179, 92, 0.08); }
   .lim-table tr.cur .lim-bar { background: var(--wait); }
-  .lim-table tr.cur th::after { content: ' · výchozí'; color: var(--wait); font-weight: 600; font-size: 0.8rem; }
+  .def { display: inline-block; margin-left: 8px; font-size: 0.72rem; font-weight: 700; color: var(--wait); border: 1px solid rgba(255, 179, 92, 0.4); border-radius: 6px; padding: 0 6px; white-space: nowrap; vertical-align: 2px; }
   .lim-table tbody tr:last-child > * { border-bottom: 0; }
 
   .cutline { padding: 56px 24px 90px; }
@@ -285,7 +279,5 @@ const maxN = Math.max(...table.map((r) => r.n));
     .cutline { padding: 56px 8px 100px; }
     .cl-mark { width: 110px; font-size: 0.78rem; }
     .cl-mark em { font-size: 0.72rem; }
-    .pipeline li + li { margin-left: 0; }
-    .pipeline li + li::before { display: none; }
-  }
+      }
 </style>

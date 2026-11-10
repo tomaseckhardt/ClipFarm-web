@@ -10,3 +10,7 @@ export const SITE = 'https://tomaseckhardt.github.io';
 /** Odkaz na instalačku ClipFarm-Setup-<verze>.exe. Berou ho všechna tlačítka „Stáhnout“ na všech stránkách.
  *  Prázdný = tlačítka vedou na stránku Stažení, kde je napsané, že instalačku pošle správce. */
 export const DOWNLOAD_URL = '';
+
+/** Kam se lidé můžou obrátit na správce ClipFarmu (Discord server, e-mail jako 'mailto:…', web).
+ *  Vyplněný = odkaz „Napsat správci“ na stránce Stažení, v Nápovědě a v patičce. Prázdný = nikde. */
+export const CONTACT_URL = '';

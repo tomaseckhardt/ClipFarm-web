@@ -245,5 +245,8 @@ const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
     .mark .score { font-size: 0; padding: 0; width: 12px; height: 12px; border-radius: 99px; translate: -50% -160%; }
     .mark .band { left: -5px; width: 10px; }
     .tl-axis span:nth-child(even) { display: none; }
+    /* klipy na mobilu v jedné vodorovné řadě (posun prstem) místo dlouhé mřížky */
+    .tl-clips { grid-auto-flow: column; grid-auto-columns: 128px; grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; margin-inline: calc(-1 * clamp(18px, 3vw, 34px)); padding-inline: clamp(18px, 3vw, 34px); scrollbar-width: thin; }
+    .clip { scroll-snap-align: start; }
   }
 </style>

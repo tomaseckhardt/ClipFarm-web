@@ -69,3 +69,21 @@ Závislosti (přesné verze v `package-lock.json`): `astro` (+ `sharp` na obráz
   CC BY 4.0). Zvukové efekty ve videích jsou od Kenney.nl (CC0, uvedení není povinné, ale je v README).
 - Anglická videa (en-16x9, en-tiktok-9x16) jsou na webu taky – v ukázkách jako přepínač titulků CZ / EN
   (aplikace je česky, ale video jde poslat i kamarádům ze zahraničí).
+
+## 6. Rozhodnutí z kol review
+
+- **Text tlačítka bez odkazu:** dokud je `DOWNLOAD_URL` prázdný, tlačítka se jmenují „Jak získat ClipFarm“
+  a vedou na Stažení. Všech 5 recenzentů označilo „Stáhnout“ bez souboru za hlavní důvod odchodu. Po doplnění
+  `DOWNLOAD_URL` se samy přejmenují na „Stáhnout pro Windows“ a vedou rovnou na instalačku.
+- **`CONTACT_URL`** (nová volba v `site.config.mjs`, zatím prázdná): kontakt na správce. Neznám ho, nevymýšlím ho.
+- **Data vydání v1.08–v1.10:** CHANGELOG je nemá, `npm run sync-changelog` je dohledá v git historii aplikace
+  (den commitu, který nadpis verze přidal; u v1.07.01 sedí s datem v changelogu) a uloží do
+  `content/release-dates.json`. Repo aplikace se jen čte.
+- **Menší webové verze videí:** originály zůstaly v `assets/brag/*/brag.mp4`; web posílá 9:16 v 540×960
+  a na mobil 16:9 v 640×360 (`scripts/optimize-videos.sh`, kodek H.264 – na tomhle stroji přes libopenh264).
+  Desktop dostane originál 16:9.
+- **Skutečné klipy ani nové screenshoty jsem nepřidal:** ve zdrojovém projektu jsou jen klipy cizích streamerů
+  (bez jejich souhlasu je nezveřejním) a spustit aplikaci kvůli novým screenshotům by znamenalo zapisovat do jejího
+  adresáře. Obojí je v REVIEW.md jako doporučení.
+- **Cena:** README ji neuvádí, web říká jen to, co platí (přístup povoluje správce, i na dobu určitou) a že cenu
+  neuvádí.

@@ -1,6 +1,6 @@
 ---
 import Logo from './Logo.astro';
-import { NAV, url, latest } from '../lib/site.ts';
+import { NAV, url, latest, contactUrl } from '../lib/site.ts';
 import oflBricolage from '../../assets/fonts/OFL-Bricolage-Grotesque.txt?url';
 import oflInstrument from '../../assets/fonts/OFL-Instrument-Sans.txt?url';
 ---
@@ -8,7 +8,7 @@ import oflInstrument from '../../assets/fonts/OFL-Instrument-Sans.txt?url';
   <div class="wrap cols">
     <div class="about">
       <a class="brand" href={url()}><Logo size={26} /><span>ClipFarm</span></a>
-      <p class="muted">Automatické highlight klipy ze streamů. Z YouTube i z Kicku, na šířku i na výšku 9:16.</p>
+      <p class="muted">Automatické highlight klipy ze streamů. Z&nbsp;YouTube i&nbsp;z&nbsp;Kicku, na šířku i&nbsp;na výšku 9:16.</p>
       <p class="muted small">Windows · Linux · aktuální verze <a href={url(`novinky/#${latest.id}`)}>{latest.version}</a></p>
     </div>
     <nav aria-label="Patička">
@@ -28,7 +28,8 @@ import oflInstrument from '../../assets/fonts/OFL-Instrument-Sans.txt?url';
         Písma Bricolage Grotesque a Instrument Sans: SIL Open Font License 1.1
         (<a href={oflBricolage}>licence 1</a>, <a href={oflInstrument}>licence 2</a>).
       </p>
-      <p class="muted">Kanály, přezdívky a skóre v ilustracích a videích jsou smyšlené.</p>
+      <p class="muted">Kanály, přezdívky a skóre v ilustracích a promo videích jsou smyšlené. Screenshoty jsou ze skutečné aplikace.</p>
+      {contactUrl && <p><a href={contactUrl} rel="noopener">Napsat správci ClipFarmu</a></p>}
     </div>
   </div>
   <div class="wrap base">

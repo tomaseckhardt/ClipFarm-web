@@ -5,6 +5,7 @@ import DownloadButton from '../components/DownloadButton.astro';
 import DownloadCards from '../components/DownloadCards.astro';
 import StreamTimeline from '../components/StreamTimeline.astro';
 import FaqList from '../components/FaqList.astro';
+import HoursCalc from '../components/HoursCalc.astro';
 import Icon from '../components/Icon.astro';
 import Logo from '../components/Logo.astro';
 import { Picture } from 'astro:assets';
@@ -12,14 +13,17 @@ import { url, latest } from '../lib/site.ts';
 import { HOME_FAQ } from '../lib/faq.ts';
 
 import heroVideo from '../../assets/brag/cs-16x9/brag.mp4?url';
+import heroVideoSm from '../../assets/brag/cs-16x9/brag-640.mp4?url';
 import heroPoster from '../../assets/brag/cs-16x9/brag.jpg';
-import tiktokCs from '../../assets/brag/cs-tiktok-9x16/brag.mp4?url';
+import tiktokCs from '../../assets/brag/cs-tiktok-9x16/brag-540.mp4?url';
 import tiktokCsPoster from '../../assets/brag/cs-tiktok-9x16/brag.jpg';
-import tiktokEn from '../../assets/brag/en-tiktok-9x16/brag.mp4?url';
+import tiktokEn from '../../assets/brag/en-tiktok-9x16/brag-540.mp4?url';
 import tiktokEnPoster from '../../assets/brag/en-tiktok-9x16/brag.jpg';
 import parody from '../../assets/brag/cs-yc-parody-16x9/brag.mp4?url';
+import parodySm from '../../assets/brag/cs-yc-parody-16x9/brag-640.mp4?url';
 import parodyPoster from '../../assets/brag/cs-yc-parody-16x9/brag.jpg';
 import enMain from '../../assets/brag/en-16x9/brag.mp4?url';
+import enMainSm from '../../assets/brag/en-16x9/brag-640.mp4?url';
 import enMainPoster from '../../assets/brag/en-16x9/brag.jpg';
 
 import shotKlipy from '../../assets/screenshots/ui-klipy.png';
@@ -29,9 +33,9 @@ import shotVarovani from '../../assets/screenshots/ui-varovani.png';
 import shotNovinky from '../../assets/screenshots/ui-novinky.png';
 
 const shots = [
-  { id: 'klipy', tab: 'Galerie klipů', img: shotKlipy, alt: 'Galerie klipů: karty s náhledem a skóre, filtr podle streamera, vybrané klipy ke stažení', text: 'Všechny klipy jako karty s náhledem, ★ skóre a délkou. Filtr podle streamera, řazení Nejlepší / Nejnovější, hromadné stažení jako ZIP.' },
-  { id: 'detail', tab: 'Doladit střih', img: shotDetail, alt: 'Detail klipu: přehrávač, doladění střihu s pásem snímků a značkou vrcholu, akce klipu', text: 'Detail klipu s přehrávačem a ministudiem: snímky, hlasitost, chat po sekundách a značka vrcholu reakce. Úchyty se přichytí k pauze ve zvuku.' },
-  { id: 'bezi', tab: 'Běží', img: shotBezi, alt: 'Karta Běží: Nastavení, nahrávání s odpočtem a logem, hlídání kanálu', text: 'Všechno, co zrovna běží: nahrávání s odpočtem, hlídání kanálu, log. Ukončit a nastříhat, změnit konec, Stop.' },
+  { id: 'bezi', tab: 'Nahrávání', img: shotBezi, alt: 'Karta Běží: Nastavení, nahrávání Kicku s odpočtem a logem, hlídání kanálu', text: 'Karta Běží: nahrávání živáku s odpočtem „zbývá 47 min“, hlídání dalšího kanálu a Nastavení (kvalita, limit skóre, klipy na výšku, Spustit, až bude živě).' },
+  { id: 'klipy', tab: 'Galerie klipů', img: shotKlipy, alt: 'Galerie klipů: karty s náhledem a skóre, filtr podle streamera, vybrané klipy ke stažení', text: 'Galerie: skutečné klipy jako karty s náhledem z vrcholu reakce, ★ skóre a délkou. Filtr podle streamera, řazení Nejlepší / Nejnovější, hromadné stažení jako ZIP.' },
+  { id: 'detail', tab: 'Detail klipu', img: shotDetail, alt: 'Detail klipu: přehrávač, pás snímků se značkou vrcholu, posuvníky začátku a konce, akce klipu', text: 'Detail klipu s přehrávačem, pásem snímků a značkou vrcholu. Vpravo tabulka, kolik klipů by dal který limit. Od v1.10.01 je místo posuvníků ministudio s časovou osou, hlasitostí a chatem.' },
   { id: 'varovani', tab: 'Aktualizace', img: shotVarovani, alt: 'Varování po spuštění: nová verze ClipFarmu, tlačítka Později a Aktualizovat teď', text: 'Nová verze? Okno to řekne po spuštění. ⬆ Aktualizovat teď, nebo Později – nic se nestáhne bez kliknutí.' },
   { id: 'novinky', tab: 'Co je nového', img: shotNovinky, alt: 'Co je nového: změny od verze, kterou jsi měl, tlačítko OK', text: 'Po aktualizaci okno samo ukáže, co je nového od verze, kterou jsi měl.' },
 ];
@@ -43,7 +47,7 @@ const shots = [
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <a class="chip announce enter" href={url(`novinky/#${latest.id}`)}>
-          <span class="new">Nové</span> {latest.version}: Doladit střih jako ve střižně <Icon name="arrow" size={16} />
+          <span class="new">Nové</span> Klipy na výšku s kamerou streamera nahoře <Icon name="arrow" size={16} />
         </a>
         <h1 class="enter" style="--i: 1">
           <span class="kicker">Automatické klipy ze streamů</span>
@@ -60,11 +64,15 @@ const shots = [
           <a class="btn btn-ghost btn-big" href="#jak-to-funguje">Jak to funguje <Icon name="arrow" size={20} /></a>
         </div>
         <p class="cta-note enter" style="--i: 4"><span>14 dní zdarma na zkoušku</span><span>žádná kreditka</span><span>Windows a Linux</span></p>
+        <div class="to-pc enter" style="--i: 5" data-share-box hidden>
+          <span><strong>Jsi na mobilu?</strong> ClipFarm je program pro počítač.</span>
+          <button type="button" class="btn btn-ghost btn-sm" data-share>Poslat si odkaz do PC</button>
+        </div>
       </div>
 
       <div class="hero-media enter" style="--i: 2">
         <div class="media-frame">
-          <VideoPlayer id="hero-video" src={heroVideo} poster={heroPoster}
+          <VideoPlayer id="hero-video" src={heroVideo} mobileSrc={heroVideoSm} poster={heroPoster}
             label="Ukázkové video ClipFarmu"
             description="21sekundové video: časovka 3:00:00 a otázka Kdo to bude celé koukat?, vložení odkazu kick.com/nocni_smena se zaškrtnutým Spustit, až bude živě, nahrávání v noci, časová osa s oranžovým kopcem chatu a značkou vrcholu, galerie klipů se skóre a nakonec logo s textem Ty spíš. Farma sklízí." />
         </div>
@@ -82,7 +90,7 @@ const shots = [
       <div class="section-head" data-reveal>
         <span class="eyebrow">Jak to funguje</span>
         <h2>Odkaz dovnitř, klipy ven.</h2>
-        <p class="lead">Tři kroky. Ten prostřední za tebe udělá ClipFarm – klidně v noci, zatímco spíš.</p>
+        <p class="lead">Pro streamery, kteří chtějí klipy ze svých streamů, i pro klipaře cizích kanálů. Tři kroky – ten prostřední za tebe udělá ClipFarm, klidně v&nbsp;noci, zatímco spíš.</p>
       </div>
 
       <ol class="step-cards">
@@ -121,7 +129,7 @@ const shots = [
 
       <div class="tl-intro" data-reveal>
         <h3 class="tl-title">Takhle se ze tří hodin stane pár klipů</h3>
-        <p class="muted">Zkus posunout limit skóre. Každý moment nad čárou je klip, aspoň dvě minuty od dalšího.</p>
+        <p class="muted">Pointa je vždycky ten oranžový kopec. Zkus posunout limit skóre: každý moment nad čárou je klip, aspoň dvě minuty od dalšího.</p>
       </div>
       <div data-reveal><StreamTimeline /></div>
       <p class="more-link" data-reveal><a href={url('jak-to-funguje/')}>Jak přesně ClipFarm počítá skóre <Icon name="arrow" size={16} /></a></p>
@@ -133,7 +141,7 @@ const shots = [
     <div class="wrap">
       <div class="section-head" data-reveal>
         <span class="eyebrow">Co umí</span>
-        <h2>Celá farma v jednom okně.</h2>
+        <h2>Celá farma v&nbsp;jednom okně.</h2>
         <p class="lead">Od nahrávání živáku po hotový Short. Bez terminálu a bez střižny.</p>
       </div>
 
@@ -215,7 +223,7 @@ const shots = [
       <div class="section-head center" data-reveal>
         <span class="eyebrow">Ukázky</span>
         <h2>ClipFarm za 21 sekund.</h2>
-        <p class="lead">Krátká videa o ClipFarmu – na výšku jako TikTok, na šířku pro všechno ostatní. Zvuk zapneš tlačítkem.</p>
+        <p class="lead">Krátká promo videa o ClipFarmu – na výšku jako TikTok, na šířku pro všechno ostatní. Klidně je pošli dál. Zvuk zapneš tlačítkem.</p>
       </div>
       <div class="samples-grid">
         <div class="phones" data-reveal>
@@ -232,22 +240,20 @@ const shots = [
         </div>
         <div class="wide-sample" data-reveal style="--i: 2">
           <div class="seg" role="tablist" aria-label="Video na šířku">
-            <button type="button" role="tab" id="tab-parody" aria-controls="panel-parody" aria-selected="true">Pitch deck (parodie)</button>
-            <button type="button" role="tab" id="tab-en" aria-controls="panel-en" aria-selected="false" tabindex="-1">English</button>
+            <button type="button" role="tab" id="tab-parody" aria-controls="panel-parody" aria-selected="true">Parodie na pitch deck</button>
+            <button type="button" role="tab" id="tab-en" aria-controls="panel-en" aria-selected="false" tabindex="-1">Hlavní video anglicky</button>
           </div>
           <div class="wide-frame">
             <div role="tabpanel" id="panel-parody" aria-labelledby="tab-parody">
-              <VideoPlayer src={parody} poster={parodyPoster} label="Parodie na investorský pitch deck"
+              <VideoPlayer src={parody} mobileSrc={parodySm} poster={parodyPoster} label="Parodie na investorský pitch deck"
                 description="Smrtelně vážný pitch deck: Problém – streamy jsou dlouhé. Řešení – ClipFarm. Nahrává, i když spíš. Spam jednoho člověka se nepočítá. Pointa je ten oranžový kopec. Obchodní model: 14 dní zkušebně, žádná kreditka. Děkujeme. Otázky?" />
             </div>
             <div role="tabpanel" id="panel-en" aria-labelledby="tab-en" hidden>
-              <VideoPlayer src={enMain} poster={enMainPoster} label="Hlavní video o ClipFarmu s anglickými titulky"
+              <VideoPlayer src={enMain} mobileSrc={enMainSm} poster={enMainPoster} label="Hlavní video o ClipFarmu s anglickými titulky"
                 description="Anglická verze hlavního videa: 3:00:00 – Who's watching all of that? Paste a link, watches the channel even at night, the punchline is the orange hill, vertical clips, You sleep. The farm harvests." />
             </div>
           </div>
-          <blockquote class="quote">
-            <p>„Problém: streamy jsou dlouhé. Řešení: ClipFarm. Nahrává, i když spíš, spam jednoho člověka se nepočítá a pointa je ten oranžový kopec.“</p>
-          </blockquote>
+          <p class="wide-cap muted small"><strong>Parodie:</strong> ClipFarm jako smrtelně vážná prezentace pro investory. Problém: streamy jsou dlouhé. Řešení: ClipFarm.</p>
         </div>
       </div>
     </div>
@@ -258,8 +264,8 @@ const shots = [
     <div class="wrap">
       <div class="section-head" data-reveal>
         <span class="eyebrow">Aplikace</span>
-        <h2>Ovládá se z jednoho okna.</h2>
-        <p class="lead">ClipFarm se otevře jako aplikace v prohlížeči. Žádný terminál, nic nenastavuješ – a zvenku na něj nikdo nedosáhne.</p>
+        <h2>Ovládá se z&nbsp;jednoho okna.</h2>
+        <p class="lead">Program běží u tebe v počítači – stahování, nahrávání i stříhání. Okno se jen otevře v prohlížeči (Chrome, Edge, Brave, Vivaldi; jinak jako běžná karta), takže nic nenastavuješ a zvenku na něj nikdo nedosáhne.</p>
       </div>
       <div class="shots" data-reveal>
         <div class="shot-tabs" role="tablist" aria-label="Screenshoty aplikace">
@@ -276,7 +282,19 @@ const shots = [
             </div>
           ))}
         </div>
+        <p class="muted small">Skutečné snímky aplikace ze starší verze (v1.03). Co přibylo od té doby, je v <a href={url('novinky/')}>Novinkách</a>.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- KALKULAČKA -->
+  <section class="section calc-section" id="kolik">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Spočítej si to</span>
+        <h2>Kolik streamu za tebe ClipFarm projede?</h2>
+      </div>
+      <div data-reveal><HoursCalc /></div>
     </div>
   </section>
 
@@ -285,15 +303,11 @@ const shots = [
     <div class="wrap">
       <div class="section-head" data-reveal>
         <span class="eyebrow">Stažení</span>
-        <h2>Windows i Linux. 14 dní zdarma.</h2>
-        <p class="lead">Celý ClipFarm na zkoušku – žádné ořezané funkce, žádný vodoznak, žádná kreditka. Klipy ze zkušební doby ti zůstanou.</p>
+        <h2>Vyzkoušej ClipFarm.</h2>
+        <p class="lead">Na Windows 14 dní celý ClipFarm na zkoušku – žádné ořezané funkce, žádný vodoznak, žádná kreditka. Klipy ze zkušební doby ti zůstanou.</p>
       </div>
       <DownloadCards />
-      <div class="reqs" data-reveal>
-        <div><Icon name="disk" /><span><strong>Místo na disku</strong> za hodinu streamu: 720p ~1,5 GB · 1080p ~3,5 GB · 1440p ~6,5 GB</span></div>
-        <div><Icon name="clock" /><span><strong>Okno</strong> v prohlížeči Chrome, Edge, Brave, Vivaldi nebo Chromium (jinak běžná karta)</span></div>
-      </div>
-      <p class="more-link" data-reveal><a href={url('stazeni/')}>Postup instalace a systémové požadavky <Icon name="arrow" size={16} /></a></p>
+      <p class="more-link" data-reveal><a href={url('stazeni/')}><span>Postup instalace a systémové požadavky</span> <Icon name="arrow" size={16} /></a></p>
     </div>
   </section>
 
@@ -350,6 +364,10 @@ const shots = [
   .clock span { display: inline-block; min-width: 6.4ch; }
   .hook { font-size: clamp(2rem, 1.2rem + 3vw, 3.5rem); line-height: 1.02; color: var(--soft); }
   .hero .lead { max-width: 560px; }
+  .to-pc { display: none; }
+  @media (max-width: 760px) {
+    :global(.js) .to-pc:not([hidden]) { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; border: 1px dashed var(--line2); font-size: 0.92rem; color: var(--soft); }
+  }
 
   .hero-media { position: relative; }
   .media-frame {
@@ -507,7 +525,7 @@ const shots = [
   .seg button[aria-selected='true'], .shot-tabs button[aria-selected='true'] { background: var(--text); color: var(--bg); }
   .wide-frame { border-radius: 20px; padding: 6px; background: linear-gradient(140deg, rgba(94, 224, 138, 0.35), rgba(42, 54, 48, 0.5) 45%, rgba(255, 179, 92, 0.2)); }
   .wide-frame :global(.player) { border-radius: 15px; }
-  .quote { margin: 0; padding: 4px 0 0 18px; border-left: 3px solid var(--go); color: var(--soft); font-size: 1.02rem; }
+  .wide-cap { padding-left: 4px; }
 
   /* SCREENSHOTY */
   .shots { display: grid; gap: 18px; }
@@ -521,10 +539,6 @@ const shots = [
   @keyframes fade-in { from { opacity: 0; } }
   .shot-text { padding: 16px 20px; color: var(--soft); border-top: 1px solid var(--line); }
 
-  /* STAŽENÍ */
-  .reqs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-  .reqs div { display: flex; gap: 12px; align-items: flex-start; padding: 16px 20px; border-radius: 16px; border: 1px solid var(--line); color: var(--soft); font-size: 0.95rem; }
-  .reqs :global(svg) { color: var(--go); flex: none; margin-top: 2px; }
 
   /* ZÁVĚR */
   .final-card {
@@ -547,7 +561,6 @@ const shots = [
   }
   @media (max-width: 760px) {
     .step-cards { grid-template-columns: 1fr; }
-    .reqs { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
     .bento { grid-template-columns: 1fr; }

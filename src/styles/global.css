@@ -57,7 +57,7 @@ strong { color: var(--text); font-weight: 650; }
 
 .wrap { width: min(1200px, 100% - 2 * var(--gutter)); margin-inline: auto; }
 .wrap.narrow { width: min(820px, 100% - 2 * var(--gutter)); }
-.section { padding-block: clamp(72px, 10vw, 140px); position: relative; }
+.section { padding-block: clamp(56px, 8vw, 120px); position: relative; }
 .section-head { max-width: 760px; margin-bottom: clamp(36px, 5vw, 64px); display: grid; gap: 18px; }
 .section-head.center { margin-inline: auto; text-align: center; justify-items: center; }
 .eyebrow {
