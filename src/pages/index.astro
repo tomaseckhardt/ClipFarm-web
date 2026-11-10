@@ -42,27 +42,27 @@ const shots = [
     <div class="hero-bg" aria-hidden="true"><div class="hero-field"></div></div>
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <a class="chip announce" href={url(`novinky/#${latest.id}`)} data-reveal>
+        <a class="chip announce enter" href={url(`novinky/#${latest.id}`)}>
           <span class="new">Nové</span> {latest.version}: Doladit střih jako ve střižně <Icon name="arrow" size={16} />
         </a>
-        <h1 data-reveal style="--i: 1">
+        <h1 class="enter" style="--i: 1">
           <span class="kicker">Automatické klipy ze streamů</span>
           <span class="sr">Tři hodiny streamu.</span>
           <span class="clock" aria-hidden="true"><span data-count="10800" data-format="time" data-duration="1600">3:00:00</span></span>
           <span class="hook">Kdo to bude celé&nbsp;koukat?</span>
         </h1>
-        <p class="lead" data-reveal style="--i: 2">
+        <p class="lead enter" style="--i: 2">
           <strong>Nikdo nemusí.</strong> Vlož odkaz na YouTube video nebo kanál na Kicku a ClipFarm podle reakcí chatu
           a hlasitosti sám najde nejlepší momenty a nastříhá z nich klipy – na šířku i na výšku pro Shorts, TikTok a Reels.
         </p>
-        <div class="cta-row" data-reveal style="--i: 3">
+        <div class="cta-row enter" style="--i: 3">
           <DownloadButton />
           <a class="btn btn-ghost btn-big" href="#jak-to-funguje">Jak to funguje <Icon name="arrow" size={20} /></a>
         </div>
-        <p class="cta-note" data-reveal style="--i: 4"><span>14 dní zdarma na zkoušku</span><span>žádná kreditka</span><span>Windows a Linux</span></p>
+        <p class="cta-note enter" style="--i: 4"><span>14 dní zdarma na zkoušku</span><span>žádná kreditka</span><span>Windows a Linux</span></p>
       </div>
 
-      <div class="hero-media" data-reveal="scale" style="--i: 2">
+      <div class="hero-media enter" style="--i: 2">
         <div class="media-frame">
           <VideoPlayer id="hero-video" src={heroVideo} poster={heroPoster}
             label="Ukázkové video ClipFarmu"

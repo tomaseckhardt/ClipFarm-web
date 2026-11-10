@@ -6,6 +6,6 @@ export default defineConfig({
   site: SITE,
   base: BASE_PATH,
   trailingSlash: 'always', // GitHub Pages: každá stránka je složka/index.html
-  build: { format: 'directory', inlineStylesheets: 'auto' },
+  build: { format: 'directory', inlineStylesheets: 'always' }, // CSS přímo v HTML: žádný blokující požadavek navíc
   devToolbar: { enabled: false },
 });

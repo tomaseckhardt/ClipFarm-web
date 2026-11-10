@@ -9,13 +9,13 @@ import { url, latest, hasDownload } from '../lib/site.ts';
   <section class="page-hero">
     <div class="glow-bg" aria-hidden="true"></div>
     <div class="wrap">
-      <span class="eyebrow" data-reveal>Stažení</span>
-      <h1 data-reveal style="--i: 1">Stáhni ClipFarm</h1>
-      <p class="lead" data-reveal style="--i: 2">
+      <span class="eyebrow enter">Stažení</span>
+      <h1 class="enter" style="--i: 1">Stáhni ClipFarm</h1>
+      <p class="lead enter" style="--i: 2">
         Na Windows jako normální program s instalačkou, na Linuxu z gitu. Prvních 14 dní je celý ClipFarm zdarma –
         žádné ořezané funkce, žádný vodoznak, žádná kreditka.
       </p>
-      <p class="ver" data-reveal style="--i: 3">
+      <p class="ver enter" style="--i: 3">
         <a class="chip" href={url(`novinky/#${latest.id}`)}>Aktuální verze <strong>{latest.version}</strong> · co je nového <Icon name="arrow" size={16} /></a>
       </p>
     </div>

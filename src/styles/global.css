@@ -127,6 +127,10 @@ a.chip:hover { border-color: var(--go); color: var(--text); }
 .js [data-reveal="scale"] { transform: scale(0.96); }
 .js [data-reveal].in { opacity: 1; transform: none; }
 
+/* vstup prvků nahoře na stránce: jen CSS, hned při načtení */
+.enter { animation: enter 0.9s var(--ease) both; animation-delay: calc(var(--i, 0) * 90ms); }
+@keyframes enter { from { opacity: 0; transform: translateY(18px); } }
+
 /* text s jemným pohybem gradientu (nadpisy) */
 .shine {
   background: linear-gradient(100deg, var(--go) 20%, #b6f5cb 40%, var(--go) 60%) 0 0 / 250% 100%;
