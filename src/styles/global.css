@@ -197,3 +197,6 @@ a.chip:hover { border-color: var(--go); color: var(--text); }
   .js [data-reveal] { opacity: 1; transform: none; }
   .shine { animation: none; background-position: 50% 0; }
 }
+
+/* emoty z BetterTTV v ukázkách chatu */
+.emote { display: inline-block; vertical-align: middle; object-fit: contain; margin-block: -4px; }

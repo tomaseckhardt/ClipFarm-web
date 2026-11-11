@@ -97,3 +97,8 @@ Závislosti (přesné verze v `package-lock.json`): `astro` (+ `sharp` na obráz
 - **Kalkulačka:** původně „kolik hodin streamu“ na úvodu; recenzenti ji označili za pouhé násobení, proto je teď na
   Stažení jako „Kolik místa na disku budeš potřebovat?“.
 - **Počet kol:** 3. Co zbylo, potřebuje údaje od majitele (REVIEW.md, konec).
+- **Emoty BTTV (na přání majitele):** staženy do `assets/emotes/`, ne načítané z CDN BTTV (žádné požadavky na cizí
+  server, funguje i když BTTV něco smaže). Emote, který se v jednom kanálu jmenoval „KEKW“, byl ve skutečnosti
+  obrázek s nápisem „I EAT POOP“ – vyřazen, použit nejrozšířenější skutečný KEKW. Spammer v ukázkách chatu je
+  `a_peterkova`, v textu „paní Peterková“ (na přání majitele); v popisu TikTok videa pro čtečky zůstal bot_bob,
+  protože tak se jmenuje ve videu.

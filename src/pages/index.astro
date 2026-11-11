@@ -9,6 +9,7 @@ import SpamDemo from '../components/SpamDemo.astro';
 import ToPc from '../components/ToPc.astro';
 import Icon from '../components/Icon.astro';
 import Logo from '../components/Logo.astro';
+import Emote from '../components/Emote.astro';
 import { Picture } from 'astro:assets';
 import { url, latest } from '../lib/site.ts';
 import { HOME_FAQ } from '../lib/faq.ts';
@@ -79,7 +80,7 @@ for (const sh of shots) zoom[sh.id] = (await getImage({ src: sh.img, width: 1280
             description="21sekundové video: časovka 3:00:00 a otázka Kdo to bude celé koukat?, vložení odkazu kick.com/nocni_smena se zaškrtnutým Spustit, až bude živě, nahrávání v noci, časová osa s oranžovým kopcem chatu a značkou vrcholu, galerie klipů se skóre a nakonec logo s textem Ty spíš. Farma sklízí." />
         </div>
         <div class="float f1" aria-hidden="true"><span class="rec-dot"></span> Nahrávání · nocni_smena</div>
-        <div class="float f2" aria-hidden="true"><b>pixel_pavla</b> KEKW</div>
+        <div class="float f2" aria-hidden="true"><b>pixel_pavla</b> <Emote code="KEKW" size={26} /> <Emote code="OMEGALUL" size={26} /></div>
         <div class="float f3" aria-hidden="true"><span class="score">★ 6,4</span> klip · 0:34</div>
         <div class="float f4" aria-hidden="true"><span class="ok9">✓</span> Na výšku 9:16</div>
       </div>
@@ -115,7 +116,7 @@ for (const sh of shots) zoom[sh.id] = (await getImage({ src: sh.img, width: 1280
             <span class="score mc-score">★ 6,4</span>
           </div>
           <h3>ClipFarm vybere momenty</h3>
-          <p class="muted">Každou sekundu obodují reakce chatu a hlasitost. Spam jednoho člověka se nepočítá, KEKW a smích až od tří různých lidí.</p>
+          <p class="muted">Každou sekundu obodují reakce chatu a hlasitost. Spam paní Peterkové se nepočítá, KEKW a smích až od tří různých lidí.</p>
         </li>
         <li class="card step spot" data-reveal style="--i: 2">
           <span class="step-n">03</span>

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import Emote from '../components/Emote.astro';
 import { url } from '../lib/site.ts';
 const flat = Array.from({ length: 48 }, (_, i) => 3 + ((i * 7) % 5));
 ---
@@ -9,7 +10,7 @@ const flat = Array.from({ length: 48 }, (_, i) => 3 + ((i * 7) % 5));
     <div class="glow-bg" aria-hidden="true"></div>
     <div class="wrap nf-inner">
       <p class="code" aria-hidden="true">404</p>
-      <h1>Tady se nic nestalo.</h1>
+      <h1>Tady se nic nestalo. <Emote code="Sadge" size={56} /></h1>
       <p class="lead">Chat mlčí, hlasitost nulová, skóre 0,0. Z tohohle místa klip nebude – stránka neexistuje nebo se přesunula.</p>
       <div class="flat" aria-hidden="true">
         {flat.map((h) => <i style={`--h: ${h}`} />)}

@@ -1,0 +1,6 @@
+---
+import { emoteHtml } from '../lib/emotes.ts';
+interface Props { code: string; size?: number }
+const { code, size = 24 } = Astro.props;
+---
+<Fragment set:html={emoteHtml(code, size)} />

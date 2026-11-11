@@ -1,13 +1,15 @@
 ---
 // Hratelná ukázka pravidla z README: „Každý člověk se počítá nejvýš jednou za 10 s. Bonus za KEKW… jen když je
-// během ~10 s napíšou aspoň 3 různí lidé.“ Bez JS zůstane statický chat.
+// během ~10 s napíšou aspoň 3 různí lidé.“ Spamuje paní Peterková (a_peterkova). Bez JS zůstane statický chat.
+import { emoteHtml } from '../lib/emotes.ts';
+const K = emoteHtml('KEKW');
 ---
-<div class="spam" data-spam>
+<div class="spam" data-spam data-kekw={K}>
   <ul class="chat" data-sp-chat>
-    <li><b style="color:#7cc7ff">pixel_pavla</b> KEKW</li>
-    <li><b style="color:#d59cff">kuba_hraje</b> xddd</li>
-    <li><b style="color:#ffd27a">radek_r</b> KEKW KEKW</li>
-    <li class="spam-row"><s><b>bot_bob</b> KEKW KEKW KEKW</s><span>×40 = 1×</span></li>
+    <li><b style="color:#7cc7ff">pixel_pavla</b> <Fragment set:html={K} /></li>
+    <li><b style="color:#d59cff">kuba_hraje</b> <Fragment set:html={emoteHtml('LULW')} /> xddd</li>
+    <li><b style="color:#ffd27a">radek_r</b> <Fragment set:html={K + K} /></li>
+    <li class="spam-row"><s><b>a_peterkova</b> <Fragment set:html={K + K + K} /></s><span>×40 = 1×</span></li>
   </ul>
   <div class="sp-play" data-sp-play hidden>
     <p class="sp-meter" aria-live="polite">
@@ -15,7 +17,7 @@
       <span class="sp-bonus" data-sp-bonus>bonus za KEKW: zatím ne</span>
     </p>
     <div class="sp-btns">
-      <button type="button" class="btn btn-sm sp-bot" data-sp="bot">Spamovat jako bot_bob</button>
+      <button type="button" class="btn btn-sm sp-bot" data-sp="bot">Spamovat jako paní Peterková</button>
       <button type="button" class="btn btn-sm sp-other" data-sp="other">Napsat jako někdo jiný</button>
     </div>
   </div>
@@ -23,13 +25,15 @@
 
 <script>
   const NAMES: [string, string][] = [['pixel_pavla', '#7cc7ff'], ['kuba_hraje', '#d59cff'], ['radek_r', '#ffd27a'], ['lenka_live', '#8ef0b0'], ['tomas_k', '#ff9f9f']];
+  const SPAMMER = 'a_peterkova';
   for (const root of document.querySelectorAll<HTMLElement>('[data-spam]')) {
+    const K = root.dataset.kekw ?? 'KEKW';
     const chat = root.querySelector<HTMLElement>('[data-sp-chat]')!;
     const play = root.querySelector<HTMLElement>('[data-sp-play]')!;
     const people = root.querySelector<HTMLElement>('[data-sp-people]')!;
     const bonus = root.querySelector<HTMLElement>('[data-sp-bonus]')!;
     play.hidden = false;
-    let started = false, botCount = 0, next = 0;
+    let started = false, spamCount = 0, next = 0;
     const seen = new Set<string>();
 
     const add = (html: string, cls = '') => {
@@ -41,7 +45,7 @@
     };
     const render = () => {
       people.textContent = String(Math.min(seen.size, 3));
-      const ok = seen.size >= 3; // bot_bob je jeden člověk, ať napíše cokoli
+      const ok = seen.size >= 3; // paní Peterková je jeden člověk, ať napíše cokoli
       bonus.textContent = ok ? 'bonus za KEKW: ano ✓' : 'bonus za KEKW: zatím ne';
       root.classList.toggle('sp-ok', ok);
     };
@@ -49,32 +53,33 @@
 
     root.querySelector('[data-sp="bot"]')!.addEventListener('click', () => {
       start();
-      botCount++;
-      const first = !seen.has('bot_bob');
-      seen.add('bot_bob');
+      spamCount++;
+      const first = !seen.has(SPAMMER);
+      seen.add(SPAMMER);
       // první zpráva se počítá, další od stejného člověka ne
-      add(first ? '<b>bot_bob</b> KEKW <span class="tag ok">+1</span>'
-        : `<s><b>bot_bob</b> KEKW</s> <span class="tag">×${botCount} = pořád 1×</span>`, first ? '' : 'spam-row');
+      add(first ? `<b>${SPAMMER}</b> ${K} <span class="tag ok">+1</span>`
+        : `<s><b>${SPAMMER}</b> ${K}</s> <span class="tag">×${spamCount} = pořád 1×</span>`, first ? '' : 'spam-row');
       render();
     });
     root.querySelector('[data-sp="other"]')!.addEventListener('click', () => {
       start();
-      if (next >= NAMES.length) { next = 0; seen.clear(); botCount = 0; chat.innerHTML = ''; }
+      if (next >= NAMES.length) { next = 0; seen.clear(); spamCount = 0; chat.innerHTML = ''; }
       const [name, color] = NAMES[next++];
       seen.add(name);
-      add(`<b style="color:${color}">${name}</b> KEKW <span class="tag ok">+1</span>`);
+      add(`<b style="color:${color}">${name}</b> ${K} <span class="tag ok">+1</span>`);
       render();
     });
   }
 </script>
 
 <style>
-  .chat { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 6px; font-size: 0.92rem; min-height: 152px; align-content: start; }
-  .chat :global(li) { background: var(--bg-deep); border: 1px solid var(--line); border-radius: 10px; padding: 5px 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .chat { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 6px; font-size: 0.92rem; min-height: 160px; align-content: start; }
+  .chat :global(li) { background: var(--bg-deep); border: 1px solid var(--line); border-radius: 10px; padding: 5px 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; min-height: 36px; }
   .chat :global(.sp-new) { animation: sp-in 0.3s var(--ease); }
   @keyframes sp-in { from { opacity: 0; transform: translateY(6px); } }
   .chat :global(.spam-row) { justify-content: space-between; color: var(--muted); }
-  .chat :global(s) { text-decoration-color: var(--rec); text-decoration-thickness: 2px; }
+  .chat :global(s) { text-decoration-color: var(--rec); text-decoration-thickness: 2px; display: inline-flex; gap: 6px; align-items: center; }
+  .chat :global(s .emote) { opacity: 0.55; }
   .chat :global(.spam-row > span), .chat :global(.tag) { color: var(--rec); font-weight: 700; white-space: nowrap; font-size: 0.85rem; }
   .chat :global(.tag.ok) { color: var(--go); }
   .sp-play { display: grid; gap: 10px; }

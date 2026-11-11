@@ -123,6 +123,7 @@ nastaví samy.
 | Screenshot Běží pro web (`ui-bezi-web.png`) | `scripts/blur-screenshot.mjs`: rozmazaná jména kanálů a řádek logu | dtto |
 | Menší webové verze videí (`brag-540.mp4` u 9:16, `brag-640.mp4` u 16:9 pro mobily) | vyrobené z originálů skriptem `scripts/optimize-videos.sh` (ffmpeg); při výměně videí ho spusť znovu | dtto |
 | Hudba ve videích: „Happy Beats / Business Moves“ Vol. 9 (16:9), Vol. 10 (TikTok), Vol. 1 (pitch deck) – Sascha Ende, [ende.app](https://ende.app/en) | přibalená ve videích | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) – uvedení autora je v patičce webu |
+| Emoty v ukázkách chatu (`assets/emotes/*.webp`: KEKW, LULW, LuL, OMEGALUL, PepeLaugh, POGGERS, Sadge, haHAA, monkaS) | staženo z CDN BetterTTV (cdn.betterttv.net), uloženo lokálně | práva mají autoři emotů; BTTV nemá licenci pro komerční použití – při problému emoty smaž nebo vyměň |
 | Zvukové efekty ve videích | [Kenney.nl](https://kenney.nl) | CC0 |
 | Screenshoty aplikace (`assets/screenshots/ui-*.png`) | `ClipFarm/docs/` | vlastní materiál ClipFarmu |
 | Písma Bricolage Grotesque a Instrument Sans (`assets/fonts/`) | `ClipFarm/web/fonts/` | SIL Open Font License 1.1 (texty licencí vedle písem, na webu odkaz v patičce) |

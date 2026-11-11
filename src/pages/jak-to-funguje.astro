@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import StreamTimeline from '../components/StreamTimeline.astro';
 import DownloadButton from '../components/DownloadButton.astro';
 import Icon from '../components/Icon.astro';
+import Emote from '../components/Emote.astro';
 import { url } from '../lib/site.ts';
 import { DEMO_PEAKS, DEFAULT_LIMIT } from '../lib/demo.ts';
 
@@ -61,11 +62,12 @@ const maxN = Math.max(...table.map((r) => r.n));
         <h3>Chat</h3>
         <ul>
           <li>Počítají se zprávy během <strong>10 s po momentu</strong> – diváci reagují se zpožděním.</li>
-          <li>Každý člověk se počítá <strong>nejvýš jednou za 10 s</strong>. Spam jednoho člověka nic nezmění.</li>
+          <li>Každý člověk se počítá <strong>nejvýš jednou za 10 s</strong>. Ať paní Peterková spamuje, jak chce, nic nezmění.</li>
           <li>Bonus za <code>KEKW</code>, <code>xddd</code>, <code>LUL</code>, <code>???</code>, 😂… jen když je během ~10 s napíšou aspoň <strong>3 různí lidé</strong>.</li>
         </ul>
+        <p class="emote-row" aria-label="Příklady emotů, za které je bonus"><Emote code="KEKW" size={28} /><Emote code="LULW" size={28} /><Emote code="OMEGALUL" size={28} /><Emote code="PepeLaugh" size={28} /><Emote code="LuL" size={28} /><Emote code="haHAA" size={28} /></p>
         <div class="spam-demo" aria-hidden="true">
-          <span><b>bot_bob</b> KEKW</span><span><b>bot_bob</b> KEKW</span><span><b>bot_bob</b> KEKW</span><span class="eq">= 1 hlas</span>
+          <span><b>a_peterkova</b> <Emote code="KEKW" size={20} /></span><span><b>a_peterkova</b> <Emote code="KEKW" size={20} /></span><span><b>a_peterkova</b> <Emote code="KEKW" size={20} /></span><span class="eq">= 1 hlas</span>
         </div>
       </article>
       <article class="card sig" data-reveal style="--i: 1">
@@ -219,6 +221,8 @@ const maxN = Math.max(...table.map((r) => r.n));
   .sig ul { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; color: var(--soft); }
   .sig li::marker { color: var(--go); }
   .sig-icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-size: 1.4rem; background: var(--field); border: 1px solid var(--line2); color: var(--go); font-weight: 800; }
+  .emote-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .spam-demo span { display: inline-flex; align-items: center; gap: 6px; }
   .spam-demo { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; font-size: 0.85rem; }
   .spam-demo span { padding: 3px 9px; border-radius: 8px; background: var(--bg-deep); border: 1px solid var(--line); color: var(--muted); }
   .spam-demo span:nth-child(2), .spam-demo span:nth-child(3) { text-decoration: line-through; text-decoration-color: var(--rec); }

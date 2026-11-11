@@ -125,7 +125,7 @@ export const FAQ: FaqGroup[] = [
           výraznější než běžný stav streamu.</p>
           <ul>
             <li><strong>Chat:</strong> zprávy během 10 s po momentu (diváci reagují se zpožděním). Každý člověk se
-            počítá nejvýš jednou za 10 s – spam jednoho člověka nic nezmění. Bonus za <code>KEKW</code>,
+            počítá nejvýš jednou za 10 s – ať paní Peterková spamuje, jak chce, nic nezmění. Bonus za <code>KEKW</code>,
             <code>xddd</code>, <code>LUL</code>, <code>???</code>, 😂… jen když je během ~10 s napíšou aspoň
             <strong>3 různí lidé</strong>.</li>
             <li><strong>Zvuk:</strong> hlasitost (smích, křik) kolem momentu.</li>
