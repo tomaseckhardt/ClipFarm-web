@@ -1,11 +1,13 @@
 ---
-// Tlačítko „Stáhnout“: odkaz bere jen z DOWNLOAD_URL (site.config.mjs) přes downloadHref.
-// Dokud odkaz není, vede na stránku Stažení a jmenuje se „Jak získat ClipFarm“ (neslibuje soubor, který není).
+// Tlačítko „Stáhnout“. Odkaz bere jen z DOWNLOAD_URL (site.config.mjs):
+// běžně vede na stránku Stažení, kde stahování začne samo (a je tam návod, co dál); direct = rovnou na soubor.
+// Dokud odkaz není, jmenuje se „Jak získat ClipFarm“ (neslibuje soubor, který není).
 import Icon from './Icon.astro';
-import { downloadHref, downloadLabel, hasDownload } from '../lib/site.ts';
-interface Props { size?: 'big' | 'sm' | 'md'; class?: string }
-const { size = 'big', class: cls } = Astro.props;
+import { downloadHref, downloadLabel, downloadUrl, hasDownload } from '../lib/site.ts';
+interface Props { size?: 'big' | 'sm' | 'md'; class?: string; direct?: boolean }
+const { size = 'big', class: cls, direct = false } = Astro.props;
+const href = direct && hasDownload ? downloadUrl : downloadHref;
 ---
-<a class:list={['btn btn-go', { 'btn-big': size === 'big', 'btn-sm': size === 'sm' }, cls]} href={downloadHref} data-download={hasDownload ? 'file' : 'page'}>
+<a class:list={['btn btn-go', { 'btn-big': size === 'big', 'btn-sm': size === 'sm' }, cls]} href={href} data-download={direct && hasDownload ? 'file' : 'page'}>
   <Icon name={hasDownload ? 'download' : 'arrow'} size={size === 'sm' ? 18 : 22} />{downloadLabel}
 </a>

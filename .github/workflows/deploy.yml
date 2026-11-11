@@ -1,10 +1,13 @@
-# Sestaví web a nasadí ho na GitHub Pages při každém pushi do main (ručně: Actions → Nasazení na GitHub Pages → Run workflow).
+# Sestaví web a nasadí ho na GitHub Pages při každém pushi do main a při každém novém vydání ClipFarmu (repository_dispatch z repa ClipFarm)
+# (ručně: Actions → Nasazení na GitHub Pages → Run workflow). Changelog a údaje o instalačce bere z nejnovějšího vydání.
 # Jednou nastavit: Settings → Pages → Source: GitHub Actions.
 name: Nasazení na GitHub Pages
 
 on:
   push:
     branches: [main]
+  repository_dispatch: # nová verze ClipFarmu: workflow „ClipFarm .exe“ v repu ClipFarm sem nahraje vydání a pošle tohle
+    types: [nove-vydani]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +30,10 @@ jobs:
           cache: npm
       - uses: actions/configure-pages@v6
       - run: npm ci
+      - name: Changelog a instalačka z nejnovějšího vydání
+        run: node scripts/fetch-release.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - run: npm test
       - run: npm run build
       - uses: actions/upload-pages-artifact@v5

@@ -102,3 +102,9 @@ Závislosti (přesné verze v `package-lock.json`): `astro` (+ `sharp` na obráz
   obrázek s nápisem „I EAT POOP“ – vyřazen, použit nejrozšířenější skutečný KEKW. Spammer v ukázkách chatu je
   `a_peterkova`, v textu „paní Peterková“ (na přání majitele); v popisu TikTok videa pro čtečky zůstal bot_bob,
   protože tak se jmenuje ve videu.
+- **Instalačka na webu (na přání majitele):** repo ClipFarm je soukromé, proto se instalačka s každou verzí kopíruje
+  do veřejných Releases repa ClipFarm-web (stálý odkaz `releases/latest/download/ClipFarm-Setup.exe`). Přístup
+  k aplikaci dál hlídá přihlášení přes Discord a správce, takže veřejná instalačka nic neobchází. Web se po vydání
+  nasadí přes `repository_dispatch` (ne událostí release – ta běží na tagu a ochrana prostředí github-pages pouští
+  jen `main`). Tlačítka „Stáhnout“ vedou na Stažení, kde stahování začne samo – návštěvník tak vidí návod
+  k SmartScreenu a přihlášení.

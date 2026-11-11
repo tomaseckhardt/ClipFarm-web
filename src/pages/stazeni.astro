@@ -36,7 +36,7 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
         <h2 id="h-win">Instalace krok za krokem</h2>
         <ol class="steps big-steps">
           <li>
-            <strong>Stáhni instalačku</strong> <code>ClipFarm-Setup-&lt;verze&gt;.exe</code>.
+            <strong>Stáhni instalačku</strong> <code>ClipFarm-Setup.exe</code>.
             {!hasDownload && <span class="muted"> Zatím ji posílá správce ClipFarmu{contactUrl && <> – <a href={contactUrl} rel="noopener">napiš mu</a></>}.</span>}
           </li>
           <li>
@@ -166,10 +166,23 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
         <h2>{hasDownload ? 'Připraveno?' : 'Chceš vědět víc?'}</h2>
         <p class="muted">Něco nejde? Mrkni do <a href={url('napoveda/')}>nápovědy</a>.</p>
       </div>
-      {hasDownload ? <DownloadButton /> : contactUrl ? <a class="btn btn-go btn-big" href={contactUrl} rel="noopener">Napsat správci <Icon name="arrow" size={20} /></a> : <a class="btn btn-ghost btn-big" href={url('jak-to-funguje/')}>Jak ClipFarm funguje <Icon name="arrow" size={20} /></a>}
+      {hasDownload ? <DownloadButton direct /> : contactUrl ? <a class="btn btn-go btn-big" href={contactUrl} rel="noopener">Napsat správci <Icon name="arrow" size={20} /></a> : <a class="btn btn-ghost btn-big" href={url('jak-to-funguje/')}>Jak ClipFarm funguje <Icon name="arrow" size={20} /></a>}
     </div>
   </section>
 </Base>
+
+<script>
+  // přišel z tlačítka „Stáhnout“ (?stahnout): spustit stahování a nechat ho na návodu; obnovení stránky už nestahuje znovu
+  if (new URLSearchParams(location.search).has('stahnout')) {
+    history.replaceState(null, '', location.pathname + '#windows');
+    const link = document.querySelector<HTMLAnchorElement>('[data-download="file"]');
+    const note = document.querySelector<HTMLElement>('[data-dl-started]');
+    if (link) {
+      if (note) note.hidden = false;
+      setTimeout(() => { location.href = link.href; }, 400);
+    }
+  }
+</script>
 
 <style>
   .ver { margin-top: 24px; }

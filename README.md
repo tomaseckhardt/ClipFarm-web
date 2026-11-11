@@ -49,37 +49,29 @@ src/scripts/site.ts      ← společný JS: animace při scrollu, videa, počít
 **Nová stránka:** přidej `src/pages/nazev.astro` (vzor: `napoveda.astro`, obal `<Base title="…" description="…">`),
 a pokud má být v menu, přidej ji do `NAV` v `src/lib/site.ts`. Adresa bude `/ClipFarm-web/nazev/`.
 
-## Odkaz ke stažení (DOWNLOAD_URL)
+## Instalačka a changelog: automaticky s každou verzí ClipFarmu
 
-Odkaz na instalačku je na **jediném místě**: `site.config.mjs`, konstanta `DOWNLOAD_URL`:
-
-```js
-export const DOWNLOAD_URL = 'https://…/ClipFarm-Setup-1.10.01.exe';
+```
+repo ClipFarm (soukromé)                         repo ClipFarm-web (veřejné)
+workflow „ClipFarm .exe“ po vydání vX.XX.XX ──►  Releases: vX.XX.XX s ClipFarm-Setup.exe, SHA256SUMS.txt, CHANGELOG.md
+                                              ──►  repository_dispatch „nove-vydani“ ──► nasazení webu (deploy.yml)
 ```
 
-Berou ho všechna tlačítka ke stažení na všech stránkách. Dokud je prázdný (`''`), tlačítka se jmenují
-„Jak získat ClipFarm“, vedou na stránku Stažení a tam je napsané, že instalačku zatím posílá správce. Po vyplnění
-se samy přejmenují na „Stáhnout pro Windows“ a vedou rovnou na soubor. Po změně stačí `npm run build`
-(nebo push do `main`, web se nasadí sám).
-
-Ve stejném souboru je **`CONTACT_URL`** – kontakt na správce (Discord server, `mailto:…`, web). Vyplněný přidá
-odkaz „Napsat správci“ na stránku Stažení, do Nápovědy a do patičky. Prázdný = nikde.
-
-## Aktualizace changelogu (stránka Novinky)
-
-Stránka Novinky se při každém buildu generuje z `content/CHANGELOG.md` (stejný formát jako v aplikaci:
-`## vX.XX.XX – datum`, skupiny `Nové:` / `Opravy:` / `Odebráno:`, odrážky). Sekce `## Nevydáno` se nezobrazuje.
-Z changelogu se bere i číslo aktuální verze na webu.
-
-```bash
-npm run sync-changelog              # zkopíruje ../ClipFarm/CHANGELOG.md do content/CHANGELOG.md
-npm run sync-changelog -- /cesta/k/ClipFarm   # když je repo aplikace jinde (nebo CLIPFARM_DIR=…)
-git commit -am "Changelog v1.xx.xx" && git push   # web se nasadí sám
-```
-
-Skript zároveň dohledá v git historii aplikace data vydání verzí, které je v changelogu nemají (den commitu,
-který nadpis verze přidal), a uloží je do `content/release-dates.json`. Kopie je ve webu proto, že build na
-GitHubu k soukromému repu aplikace nemá přístup.
+- **Odkaz ke stažení** je v `site.config.mjs` (`DOWNLOAD_URL`) a míří na stálou adresu
+  `https://github.com/tomaseckhardt/ClipFarm-web/releases/latest/download/ClipFarm-Setup.exe` – vždy nejnovější
+  instalačka, nic se nemění ručně. Tlačítka „Stáhnout“ vedou na stránku Stažení (`/stazeni/?stahnout`), kde stahování
+  začne samo a pod tím je návod (SmartScreen, Discord). Na Stažení je i velikost a SHA256 instalačky.
+- **Changelog:** nasazení si před buildem spustí `scripts/fetch-release.mjs`, který z nejnovějšího vydání stáhne
+  `CHANGELOG.md` do `content/` a údaje o instalačce do `content/latest-release.json` (chybějící datum verze doplní
+  z data vydání). Stránka Novinky se z něj vygeneruje.
+- **Jednou nastavit v repu ClipFarm:** secret `CLIPFARM_WEB_TOKEN` = fine-grained token jen k repu ClipFarm-web
+  s oprávněním **Contents: Read and write** (GitHub → Settings → Developer settings → Fine-grained tokens). Bez něj
+  workflow v ClipFarmu tenhle krok přeskočí a web zůstane na poslední nahrané verzi.
+- **Ručně** (např. starší verze): vydání v ClipFarm-web jde vytvořit i ručně
+  (`gh release create vX.XX.XX ClipFarm-Setup.exe SHA256SUMS.txt CHANGELOG.md -R tomaseckhardt/ClipFarm-web`)
+  a pak Actions → Nasazení na GitHub Pages → Run workflow.
+- Lokálně: `npm run sync-changelog` vezme changelog z `../ClipFarm` (i s daty z git historie).
+- `DOWNLOAD_URL = ''` vrátí stav „instalačku posílá správce“; `CONTACT_URL` přidá odkaz „Napsat správci“.
 
 ## Nasazení na GitHub Pages krok za krokem
 
