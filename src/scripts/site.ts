@@ -23,14 +23,16 @@ onScroll();
 // videa: přehrávat jen když jsou vidět; pozastavit mimo obraz; s „omezit pohyb“ / šetřením dat nespouštět samo
 const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
 const slowNet = conn?.saveData === true || /(^|-)2g|3g/.test(conn?.effectiveType ?? '');
-const autoplayOK = () => !reduce.matches && !slowNet;
+const narrow = matchMedia('(max-width: 700px)');
+// na mobilu se samo spouští jen hlavní video; ukázky až na ťuknutí (data, palec, plynulost)
+const autoplayOK = (v: HTMLVideoElement) => !reduce.matches && !slowNet && !(narrow.matches && v.closest('.samples'));
 const players = [...document.querySelectorAll<HTMLElement>('.player')];
 
 const videoIO = new IntersectionObserver(
   (entries) => {
     for (const e of entries) {
       const v = e.target as HTMLVideoElement;
-      if (e.isIntersecting && autoplayOK() && !v.dataset.userPaused) v.play().catch(() => {});
+      if (e.isIntersecting && autoplayOK(v) && !v.dataset.userPaused) v.play().catch(() => {});
       else if (!e.isIntersecting && !v.paused) v.pause();
     }
   },
@@ -40,7 +42,9 @@ const videoIO = new IntersectionObserver(
 for (const player of players) {
   const v = player.querySelector('video');
   if (!v) continue;
-  const playBtn = player.querySelector<HTMLButtonElement>('[data-act="play"]');
+  const playBtns = player.querySelectorAll<HTMLButtonElement>('[data-act="play"]');
+  const playBtn = player.querySelector<HTMLButtonElement>('.ctl[data-act="play"]');
+  player.classList.toggle('manual', !autoplayOK(v));
   const soundBtn = player.querySelector<HTMLButtonElement>('[data-act="sound"]');
   const sync = () => {
     player.classList.toggle('playing', !v.paused);
@@ -54,10 +58,10 @@ for (const player of players) {
     if (label) label.textContent = v.muted ? 'Zapnout zvuk' : 'Vypnout zvuk';
   };
   v.addEventListener('volumechange', syncSound);
-  playBtn?.addEventListener('click', () => {
+  playBtns.forEach((b) => b.addEventListener('click', () => {
     if (v.paused) { delete v.dataset.userPaused; v.play().catch(() => {}); }
     else { v.dataset.userPaused = '1'; v.pause(); }
-  });
+  }));
   soundBtn?.addEventListener('click', () => {
     const on = v.muted;
     if (on) document.querySelectorAll<HTMLVideoElement>('.player video').forEach((o) => { if (o !== v) o.muted = true; });
@@ -134,8 +138,7 @@ if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
 }
 
 // „Poslat si odkaz do PC“: na mobilu (CSS ukazuje jen na úzkých displejích) sdílení, jinak zkopírovat odkaz
-const shareBox = document.querySelector<HTMLElement>('[data-share-box]');
-if (shareBox) {
+for (const shareBox of document.querySelectorAll<HTMLElement>('[data-share-box]')) {
   shareBox.hidden = false;
   shareBox.querySelector<HTMLButtonElement>('[data-share]')?.addEventListener('click', async (e) => {
     const btn = e.currentTarget as HTMLButtonElement;

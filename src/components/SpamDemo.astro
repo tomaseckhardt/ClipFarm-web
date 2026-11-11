@@ -1,0 +1,88 @@
+---
+// Hratelná ukázka pravidla z README: „Každý člověk se počítá nejvýš jednou za 10 s. Bonus za KEKW… jen když je
+// během ~10 s napíšou aspoň 3 různí lidé.“ Bez JS zůstane statický chat.
+---
+<div class="spam" data-spam>
+  <ul class="chat" data-sp-chat>
+    <li><b style="color:#7cc7ff">pixel_pavla</b> KEKW</li>
+    <li><b style="color:#d59cff">kuba_hraje</b> xddd</li>
+    <li><b style="color:#ffd27a">radek_r</b> KEKW KEKW</li>
+    <li class="spam-row"><s><b>bot_bob</b> KEKW KEKW KEKW</s><span>×40 = 1×</span></li>
+  </ul>
+  <div class="sp-play" data-sp-play hidden>
+    <p class="sp-meter" aria-live="polite">
+      <span>Různí lidé: <b data-sp-people>0</b>/3</span>
+      <span class="sp-bonus" data-sp-bonus>bonus za KEKW: zatím ne</span>
+    </p>
+    <div class="sp-btns">
+      <button type="button" class="btn btn-sm sp-bot" data-sp="bot">Spamovat jako bot_bob</button>
+      <button type="button" class="btn btn-sm sp-other" data-sp="other">Napsat jako někdo jiný</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const NAMES: [string, string][] = [['pixel_pavla', '#7cc7ff'], ['kuba_hraje', '#d59cff'], ['radek_r', '#ffd27a'], ['lenka_live', '#8ef0b0'], ['tomas_k', '#ff9f9f']];
+  for (const root of document.querySelectorAll<HTMLElement>('[data-spam]')) {
+    const chat = root.querySelector<HTMLElement>('[data-sp-chat]')!;
+    const play = root.querySelector<HTMLElement>('[data-sp-play]')!;
+    const people = root.querySelector<HTMLElement>('[data-sp-people]')!;
+    const bonus = root.querySelector<HTMLElement>('[data-sp-bonus]')!;
+    play.hidden = false;
+    let started = false, botCount = 0, next = 0;
+    const seen = new Set<string>();
+
+    const add = (html: string, cls = '') => {
+      const li = document.createElement('li');
+      li.className = `${cls} sp-new`.trim();
+      li.innerHTML = html;
+      chat.append(li);
+      while (chat.children.length > 4) chat.firstElementChild!.remove();
+    };
+    const render = () => {
+      people.textContent = String(Math.min(seen.size, 3));
+      const ok = seen.size >= 3; // bot_bob je jeden člověk, ať napíše cokoli
+      bonus.textContent = ok ? 'bonus za KEKW: ano ✓' : 'bonus za KEKW: zatím ne';
+      root.classList.toggle('sp-ok', ok);
+    };
+    const start = () => { if (!started) { started = true; chat.innerHTML = ''; } };
+
+    root.querySelector('[data-sp="bot"]')!.addEventListener('click', () => {
+      start();
+      botCount++;
+      const first = !seen.has('bot_bob');
+      seen.add('bot_bob');
+      // první zpráva se počítá, další od stejného člověka ne
+      add(first ? '<b>bot_bob</b> KEKW <span class="tag ok">+1</span>'
+        : `<s><b>bot_bob</b> KEKW</s> <span class="tag">×${botCount} = pořád 1×</span>`, first ? '' : 'spam-row');
+      render();
+    });
+    root.querySelector('[data-sp="other"]')!.addEventListener('click', () => {
+      start();
+      if (next >= NAMES.length) { next = 0; seen.clear(); botCount = 0; chat.innerHTML = ''; }
+      const [name, color] = NAMES[next++];
+      seen.add(name);
+      add(`<b style="color:${color}">${name}</b> KEKW <span class="tag ok">+1</span>`);
+      render();
+    });
+  }
+</script>
+
+<style>
+  .chat { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 6px; font-size: 0.92rem; min-height: 152px; align-content: start; }
+  .chat :global(li) { background: var(--bg-deep); border: 1px solid var(--line); border-radius: 10px; padding: 5px 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .chat :global(.sp-new) { animation: sp-in 0.3s var(--ease); }
+  @keyframes sp-in { from { opacity: 0; transform: translateY(6px); } }
+  .chat :global(.spam-row) { justify-content: space-between; color: var(--muted); }
+  .chat :global(s) { text-decoration-color: var(--rec); text-decoration-thickness: 2px; }
+  .chat :global(.spam-row > span), .chat :global(.tag) { color: var(--rec); font-weight: 700; white-space: nowrap; font-size: 0.85rem; }
+  .chat :global(.tag.ok) { color: var(--go); }
+  .sp-play { display: grid; gap: 10px; }
+  .sp-meter { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; font-size: 0.9rem; color: var(--muted); }
+  .sp-meter b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .sp-bonus { font-weight: 700; transition: color 0.3s; }
+  :global(.sp-ok) .sp-bonus { color: var(--go); }
+  .sp-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sp-btns .btn { font-size: 0.86rem; min-height: 40px; padding: 0 12px; }
+  .sp-bot { color: #ffb4b4; }
+</style>

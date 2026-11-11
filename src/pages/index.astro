@@ -5,7 +5,8 @@ import DownloadButton from '../components/DownloadButton.astro';
 import DownloadCards from '../components/DownloadCards.astro';
 import StreamTimeline from '../components/StreamTimeline.astro';
 import FaqList from '../components/FaqList.astro';
-import HoursCalc from '../components/HoursCalc.astro';
+import SpamDemo from '../components/SpamDemo.astro';
+import ToPc from '../components/ToPc.astro';
 import Icon from '../components/Icon.astro';
 import Logo from '../components/Logo.astro';
 import { Picture } from 'astro:assets';
@@ -40,7 +41,7 @@ const shots = [
   { id: 'novinky', tab: 'Co je nového', img: shotNovinky, alt: 'Co je nového: změny od verze, kterou jsi měl, tlačítko OK', text: 'Po aktualizaci okno samo ukáže, co je nového od verze, kterou jsi měl.' },
 ];
 ---
-<Base description="ClipFarm z dlouhých streamů (YouTube, Kick) automaticky najde nejlepší momenty podle reakcí chatu a hlasitosti a nastříhá z nich klipy – na šířku i na výšku 9:16 pro Shorts, TikTok a Reels. Windows a Linux, 14 dní zdarma.">
+<Base description="ClipFarm z dlouhých streamů (YouTube, Kick) automaticky najde nejlepší momenty podle reakcí chatu a hlasitosti a nastříhá z nich klipy – na šířku i na výšku 9:16 pro Shorts, TikTok a Reels. Pro Windows (14 dní zdarma) a Linux.">
   <!-- HERO -->
   <section class="hero">
     <div class="hero-bg" aria-hidden="true"><div class="hero-field"></div></div>
@@ -61,13 +62,10 @@ const shots = [
         </p>
         <div class="cta-row enter" style="--i: 3">
           <DownloadButton />
-          <a class="btn btn-ghost btn-big" href="#jak-to-funguje">Jak to funguje <Icon name="arrow" size={20} /></a>
+          <a class="btn btn-ghost btn-big down" href="#jak-to-funguje">Jak to funguje <Icon name="arrow" size={20} /></a>
         </div>
-        <p class="cta-note enter" style="--i: 4"><span>14 dní zdarma na zkoušku</span><span>žádná kreditka</span><span>Windows a Linux</span></p>
-        <div class="to-pc enter" style="--i: 5" data-share-box hidden>
-          <span><strong>Jsi na mobilu?</strong> ClipFarm je program pro počítač.</span>
-          <button type="button" class="btn btn-ghost btn-sm" data-share>Poslat si odkaz do PC</button>
-        </div>
+        <p class="cta-note enter" style="--i: 4"><span>14 dní zdarma na Windows</span><span>žádná kreditka</span><span>YouTube a Kick</span></p>
+        <ToPc class="enter" style="--i: 5" />
       </div>
 
       <div class="hero-media enter" style="--i: 2">
@@ -79,7 +77,7 @@ const shots = [
         <div class="float f1" aria-hidden="true"><span class="rec-dot"></span> Nahrávání · nocni_smena</div>
         <div class="float f2" aria-hidden="true"><b>pixel_pavla</b> KEKW</div>
         <div class="float f3" aria-hidden="true"><span class="score">★ 6,4</span> klip · 0:34</div>
-        <div class="float f4" aria-hidden="true"><s><b>bot_bob</b> KEKW KEKW</s></div>
+        <div class="float f4" aria-hidden="true"><span class="ok9">✓</span> Na výšku 9:16</div>
       </div>
     </div>
   </section>
@@ -153,7 +151,7 @@ const shots = [
             <div class="job-tags"><span class="chip">Hlídá kanál</span><span class="chip">Neuspávat počítač ✓</span></div>
           </div>
           <h3>Hlídá kanál, i když spíš</h3>
-          <p class="muted"><strong>Spustit, až bude živě</strong> hlídá kanál na Kicku, i když streamer zrovna nevysílá. Jakmile začne, ClipFarm stream nahraje, nastříhá a hlídá dál na další. Výpadek internetu nahrávání neukončí a nahrává se i po zavření okna.</p>
+          <p class="muted"><strong>Spustit, až bude živě</strong> hlídá kanál na Kicku, i když streamer zrovna nevysílá. Jakmile začne, ClipFarm stream nahraje, nastříhá a hlídá dál na další – klidně víc kanálů naráz. Nahrává se od chvíle spuštění, takže hlídání zapni dopředu. Výpadek internetu nahrávání neukončí a nahrává se i po zavření okna.</p>
         </article>
 
         <article class="card b-src spot" data-reveal style="--i: 1">
@@ -163,14 +161,9 @@ const shots = [
         </article>
 
         <article class="card b-chat spot" data-reveal>
-          <ul class="chat" aria-hidden="true">
-            <li><b style="color:#7cc7ff">pixel_pavla</b> KEKW</li>
-            <li><b style="color:#d59cff">kuba_hraje</b> xddd</li>
-            <li><b style="color:#ffd27a">radek_r</b> KEKW KEKW</li>
-            <li class="spam"><s><b>bot_bob</b> KEKW KEKW KEKW</s><span>×40 = 1×</span></li>
-          </ul>
           <h3>Chat, ne spam</h3>
-          <p class="muted">Každý člověk se počítá nejvýš jednou za 10 s. Bonus za KEKW, LUL nebo ??? jen když je napíšou aspoň tři různí lidé.</p>
+          <p class="muted">Každý člověk se počítá nejvýš jednou za 10 s. Bonus za KEKW, LUL nebo ??? jen když je napíšou aspoň tři různí lidé. Zkus si to:</p>
+          <SpamDemo />
         </article>
 
         <article class="card b-vert spot" data-reveal style="--i: 1">
@@ -221,7 +214,7 @@ const shots = [
   <section class="section samples" id="ukazky">
     <div class="wrap">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow">Ukázky</span>
+        <span class="eyebrow">Promo videa</span>
         <h2>ClipFarm za 21 sekund.</h2>
         <p class="lead">Krátká promo videa o ClipFarmu – na výšku jako TikTok, na šířku pro všechno ostatní. Klidně je pošli dál. Zvuk zapneš tlačítkem.</p>
       </div>
@@ -230,17 +223,17 @@ const shots = [
           <figure class="phone p1">
             <VideoPlayer vertical src={tiktokCs} poster={tiktokCsPoster} label="TikTok video o ClipFarmu, česky"
               description="Svislé video ve stylu TikTok: streamer jede 6 hodin a ty jsi v práci, ClipFarm to nahraje, spam bot_boba počítá jednou, pointu najde v oranžovém kopci a klipy pak swipeš jako na Tinderu. Na konci 14 dní na zkoušku." />
-            <figcaption>TikTok · česky</figcaption>
+            <figcaption>Česky</figcaption>
           </figure>
           <figure class="phone p2">
             <VideoPlayer vertical src={tiktokEn} poster={tiktokEnPoster} label="TikTok video o ClipFarmu, anglické titulky"
               description="Stejné svislé video s anglickými titulky, aplikace v něm zůstává česky." />
-            <figcaption>TikTok · English</figcaption>
+            <figcaption>Anglicky – pro kámoše ze zahraničí</figcaption>
           </figure>
         </div>
         <div class="wide-sample" data-reveal style="--i: 2">
           <div class="seg" role="tablist" aria-label="Video na šířku">
-            <button type="button" role="tab" id="tab-parody" aria-controls="panel-parody" aria-selected="true">Parodie na pitch deck</button>
+            <button type="button" role="tab" id="tab-parody" aria-controls="panel-parody" aria-selected="true">Parodie</button>
             <button type="button" role="tab" id="tab-en" aria-controls="panel-en" aria-selected="false" tabindex="-1">Hlavní video anglicky</button>
           </div>
           <div class="wide-frame">
@@ -287,16 +280,6 @@ const shots = [
     </div>
   </section>
 
-  <!-- KALKULAČKA -->
-  <section class="section calc-section" id="kolik">
-    <div class="wrap">
-      <div class="section-head" data-reveal>
-        <span class="eyebrow">Spočítej si to</span>
-        <h2>Kolik streamu za tebe ClipFarm projede?</h2>
-      </div>
-      <div data-reveal><HoursCalc /></div>
-    </div>
-  </section>
 
   <!-- STAŽENÍ -->
   <section class="section" id="stazeni">
@@ -331,7 +314,8 @@ const shots = [
         <h2>Ty spíš. <span class="shine">Farma sklízí.</span></h2>
         <p class="lead">Vlož kanál, jdi spát, ráno máš klipy.</p>
         <div class="cta-row center"><DownloadButton /></div>
-        <p class="cta-note center"><span>14 dní zdarma</span><span>Windows · Linux</span><span>{latest.version}</span></p>
+        <ToPc />
+        <p class="cta-note center"><span>14 dní zdarma na Windows</span><span>Linux pro pozvané</span><span>{latest.version}</span></p>
       </div>
     </div>
   </section>
@@ -364,10 +348,6 @@ const shots = [
   .clock span { display: inline-block; min-width: 6.4ch; }
   .hook { font-size: clamp(2rem, 1.2rem + 3vw, 3.5rem); line-height: 1.02; color: var(--soft); }
   .hero .lead { max-width: 560px; }
-  .to-pc { display: none; }
-  @media (max-width: 760px) {
-    :global(.js) .to-pc:not([hidden]) { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; border: 1px dashed var(--line2); font-size: 0.92rem; color: var(--soft); }
-  }
 
   .hero-media { position: relative; }
   .media-frame {
@@ -382,8 +362,9 @@ const shots = [
     animation: bob 6s ease-in-out infinite;
   }
   .float b { color: #7cc7ff; font-weight: 700; }
-  .float s { color: var(--muted); text-decoration-color: var(--rec); text-decoration-thickness: 2px; }
-  .float s b { color: var(--muted); }
+  .float .ok9 { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; background: var(--go); color: var(--go-text); font-weight: 800; font-size: 0.8rem; }
+  .down :global(svg) { transform: rotate(90deg); }
+  .down:hover :global(svg) { transform: rotate(90deg) translateX(3px); }
   .f1 { top: -20px; left: 7%; animation-delay: -1s; }
   .f2 { top: 34%; right: -34px; animation-delay: -3s; }
   .f3 { bottom: -22px; right: 10%; animation-delay: -2s; }
@@ -447,8 +428,8 @@ const shots = [
   .bento .card:hover { translate: 0 -4px; border-color: var(--line2); }
   .b-watch { grid-column: span 4; }
   .b-src { grid-column: span 2; }
-  .b-chat, .b-vert, .b-cut { grid-column: span 2; }
-  .b-studio, .b-swipe { grid-column: span 3; }
+  .b-chat, .b-vert { grid-column: span 3; }
+  .b-cut, .b-studio, .b-swipe { grid-column: span 2; }
   .job { background: var(--bg-deep); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 12px; margin-bottom: 6px; }
   .job-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .job-left { margin-left: auto; color: var(--muted); font-size: 0.9rem; }
@@ -464,12 +445,7 @@ const shots = [
   .src-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
   .src-chips span { padding: 6px 12px; border-radius: 10px; background: var(--bg-deep); border: 1px solid var(--line2); font-weight: 700; font-size: 0.9rem; }
   .src-chips span:nth-child(-n + 2) { color: var(--go); border-color: rgba(94, 224, 138, 0.35); }
-  .chat { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 6px; font-size: 0.92rem; }
-  .chat li { background: var(--bg-deep); border: 1px solid var(--line); border-radius: 10px; padding: 5px 10px; }
-  .chat .spam { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); }
-  .chat .spam s { text-decoration-color: var(--rec); text-decoration-thickness: 2px; }
-  .chat .spam span { color: var(--rec); font-weight: 700; white-space: nowrap; }
-  .formats { display: flex; align-items: flex-end; gap: 12px; height: 120px; margin-bottom: 6px; }
+  .formats { display: flex; align-items: flex-end; gap: 12px; height: 168px; margin-bottom: 6px; }
   .fmt { position: relative; border-radius: 10px; border: 1px solid var(--line2); overflow: hidden; display: grid; background: #1b2b33; }
   .fmt em { position: absolute; left: 0; right: 0; bottom: 4px; text-align: center; font-style: normal; font-size: 0.7rem; font-weight: 700; color: #fff; text-shadow: 0 1px 4px #000; }
   .f169 { width: 44%; aspect-ratio: 16 / 9; background: linear-gradient(180deg, #3b3a6b, #2c4a3a); }
@@ -548,6 +524,11 @@ const shots = [
   }
   .final-card h2 { font-size: clamp(2.4rem, 1.4rem + 4.5vw, 5rem); }
   :global(.final-logo) { filter: drop-shadow(0 0 24px rgba(94, 224, 138, 0.5)); }
+  /* výhonek vyroste: stonek, pak listy */
+  :global(.js) .final-card :global(.final-logo path) { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.9s var(--ease); }
+  :global(.js) .final-card.in :global(.final-logo path) { stroke-dashoffset: 0; }
+  :global(.js) .final-card.in :global(.final-logo .leaf-l) { transition-delay: 0.7s; }
+  :global(.js) .final-card.in :global(.final-logo .leaf-r) { transition-delay: 1s; }
   .final-card .cta-row { justify-content: center; }
 
   @media (max-width: 1000px) {

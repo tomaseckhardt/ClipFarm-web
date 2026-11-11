@@ -21,6 +21,7 @@ const descId = `${id ?? src.replace(/\W+/g, '-')}-desc`;
     aria-label={label} aria-describedby={descId}
   >{mobileSrc && <source src={mobileSrc} media="(max-width: 700px)" type="video/mp4" />}{mobileSrc && <source src={src} type="video/mp4" />}</video>
   <p class="sr" id={descId}>{description}</p>
+  <button type="button" class="big-play" data-act="play" aria-label="Přehrát video" tabindex="-1"><Icon name="play" size={30} /></button>
   <div class="controls">
     <button type="button" class="ctl" data-act="play" aria-label="Přehrát video">
       <span class="i-play"><Icon name="play" size={18} /></span><span class="i-pause"><Icon name="pause" size={18} /></span>
@@ -55,10 +56,18 @@ const descId = `${id ?? src.replace(/\W+/g, '-')}-desc`;
   .ctl-sound[aria-pressed='true'] .i-sound { display: inline-flex; }
   .i-play, .i-mute { display: inline-flex; }
   .vertical .ctl-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  /* malé video (mobil): jen ikony v rohu, ať nekryjí obsah */
+  /* velké „přehrát“ uprostřed, když se video samo nespouští (mobil u ukázek, omezení pohybu, pomalé připojení) */
+  .big-play {
+    position: absolute; inset: 50% auto auto 50%; translate: -50% -50%; z-index: 2; width: 68px; height: 68px; border-radius: 99px;
+    display: none; place-items: center; border: 0; cursor: pointer; color: var(--go-text); background: var(--go);
+    box-shadow: 0 10px 30px -6px rgba(94, 224, 138, 0.6); transition: transform 0.2s var(--ease);
+  }
+  .big-play:hover { transform: scale(1.06); }
+  .player:global(.manual:not(.playing)) .big-play { display: grid; }
+  /* malé video (mobil): jen ikony, ale dost velké pro palec */
   @media (max-width: 640px) {
-    .controls { left: auto; right: 8px; bottom: 8px; gap: 6px; }
-    .ctl { height: 34px; min-width: 34px; padding: 0 8px; border-radius: 10px; }
+    .controls { left: 8px; bottom: 8px; gap: 6px; }
+    .ctl { height: 44px; min-width: 44px; padding: 0 10px; border-radius: 12px; justify-content: center; }
     .ctl-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   }
 </style>

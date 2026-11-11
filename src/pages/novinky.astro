@@ -3,18 +3,18 @@
 import Base from '../layouts/Base.astro';
 import DownloadButton from '../components/DownloadButton.astro';
 import { releases, latest } from '../lib/site.ts';
-import { inline, czDate } from '../lib/changelog.ts';
+import { inline, czDate, stripIssueRefs, highlights } from '../lib/changelog.ts';
 
 import type { Release } from '../lib/changelog.ts';
 
 const LABEL = { new: 'Nové', fix: 'Opravy', removed: 'Odebráno', topic: '' } as const;
-const OPEN = 1; // tolik nejnovějších verzí je rozbalených, starší mají změny pod „Zobrazit změny“
+const OPEN = 0; // tolik nejnovějších verzí je rozbalených; ostatní mají shrnutí a změny pod „Všechny změny“
 const first = releases[releases.length - 1];
 const days = first.date && latest.date ? Math.round((Date.parse(latest.date) - Date.parse(first.date)) / 864e5) : null;
 const count = (r: Release) => r.groups.reduce((n, g) => n + g.items.length, 0);
 const groupsHtml = (r: Release) => r.groups.map((g) =>
   `<section class="group">${g.title ? `<h3 class="g-title ${g.kind}">${inline(g.kind === 'topic' ? g.title : LABEL[g.kind])}</h3>` : ''}` +
-  `<ul>${g.items.map((it) => `<li>${inline(it)}</li>`).join('')}</ul></section>`).join('');
+  `<ul>${g.items.map((it) => `<li>${inline(stripIssueRefs(it))}</li>`).join('')}</ul></section>`).join('');
 ---
 <Base title="Novinky" description={`Co přinesla která verze ClipFarmu. Nejnovější je ${latest.version}. Changelog generovaný přímo z aplikace.`}>
   <section class="page-hero">
@@ -53,10 +53,13 @@ const groupsHtml = (r: Release) => r.groups.map((g) =>
               {i === 0 && <span class="chip now">Nejnovější</span>}
               {r.date && <time datetime={r.date} class="muted">{czDate(r.date)}</time>}
             </header>
-            {r.intro.map((p) => <p class="intro" set:html={inline(p)} />)}
+            {r.intro.map((p) => <p class="intro" set:html={inline(stripIssueRefs(p))} />)}
+            {highlights(r).length > 0 && (
+              <p class="hl"><span>Hlavně:</span> {highlights(r).map((h) => <b set:html={inline(h)} />)}</p>
+            )}
             {i < OPEN ? <Fragment set:html={groupsHtml(r)} /> : (
               <details class="more">
-                <summary>Zobrazit změny <span>{count(r)}</span></summary>
+                <summary>Všechny změny <span>{count(r)}</span></summary>
                 <div class="more-body" set:html={groupsHtml(r)} />
               </details>
             )}
@@ -85,9 +88,12 @@ const groupsHtml = (r: Release) => r.groups.map((g) =>
 </script>
 
 <style>
-  .stats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-  .stats span { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line2); background: var(--surface); color: var(--soft); font-size: 0.92rem; }
+  .stats { display: flex; flex-wrap: wrap; gap: 4px 0; margin-top: 18px; color: var(--muted); }
+  .stats span + span::before { content: '·'; margin: 0 10px; color: var(--line2); }
   .stats strong { color: var(--go); font-family: var(--disp); font-size: 1.05rem; }
+  .hl { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.92rem; }
+  .hl span { color: var(--muted); margin-right: 2px; }
+  .hl b { font-weight: 650; padding: 3px 10px; border-radius: 8px; background: rgba(94, 224, 138, 0.1); color: var(--soft); }
   .layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; padding-bottom: 40px; }
   .toc { position: sticky; top: calc(var(--header-h) + 20px); max-height: calc(100vh - var(--header-h) - 40px); overflow-y: auto; }
   .toc-title { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
@@ -131,7 +137,7 @@ const groupsHtml = (r: Release) => r.groups.map((g) =>
   .end-card { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; justify-content: space-between; padding: 24px 28px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); }
   @media (max-width: 860px) {
     .layout { grid-template-columns: 1fr; }
-    .toc { position: static; max-height: none; }
+    .toc { display: none; }
     .toc ul { display: flex; flex-wrap: wrap; gap: 6px; }
     .toc a { border: 1px solid var(--line2); border-radius: 999px; padding: 6px 12px; min-height: 40px; align-items: center; }
     .toc a span { display: none; }

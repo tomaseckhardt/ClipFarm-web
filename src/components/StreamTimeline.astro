@@ -56,7 +56,7 @@ const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
     </svg>
     <div class="tl-limit" data-tl-line style={`--ly: ${(y(LIMIT) / H) * 100}%`}><span>limit <b data-tl-limit-label>{cz(LIMIT)}</b></span></div>
     {clips.map((c) => (
-      <div class:list={['mark', { on: c.s >= LIMIT }]} data-s={c.s} data-x={c.x} style={`--x: ${c.x * 100}%; --top: ${(y(c.s) / H) * 100}%`}>
+      <div class:list={['mark', { on: c.s >= LIMIT, top: c.s >= 4.5 }]} data-s={c.s} data-x={c.x} style={`--x: ${c.x * 100}%; --top: ${(y(c.s) / H) * 100}%`}>
         <span class="band"></span>
         <span class="score">★ <span class="v">{cz(c.s)}</span></span>
       </div>
@@ -67,23 +67,28 @@ const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
     {[0, 30, 60, 90, 120, 150, 180].map((m) => <span>{t(m * 60)}</span>)}
   </div>
   <div class="tl-legend" aria-hidden="true">
-    <span><i class="lg-bar"></i>skóre momentu (chat + hlasitost)</span>
-    <span><i class="lg-vol"></i>hlasitost</span>
+    <span><i class="lg-bar"></i>skóre momentu (chat + hlasitost) – co je nad čárou, bude klip</span>
     <span><i class="lg-lim"></i>limit skóre</span>
+    <span><i class="lg-vol"></i>samotná hlasitost</span>
   </div>
 
   <div class="tl-controls">
     <label class="tl-range">
       <span class="tl-range-label">Limit skóre <output data-tl-out>{cz(LIMIT)}</output></span>
       <input type="range" min="1.5" max="6" step="0.5" value={LIMIT} data-tl-input aria-valuetext={cz(LIMIT)} />
-      <span class="muted small">Výchozí 2,5. Víc = méně a lepších klipů. Stejný posuvník má ClipFarm v Nastavení.</span>
+      <span class="muted small">Výchozí 2,5. Víc = méně a lepších klipů. Stejné číslo nastavíš v ClipFarmu v Nastavení.</span>
     </label>
+    <div class="tl-fmt" role="group" aria-label="Formát klipů">
+      <button type="button" aria-pressed="true" data-tl-fmt="wide">16:9</button>
+      <button type="button" aria-pressed="false" data-tl-fmt="vert">9:16</button>
+    </div>
     <button type="button" class="btn btn-ghost btn-sm" data-tl-replay>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5"/></svg>
       Přehrát znovu
     </button>
   </div>
 
+  <span class="tl-swipe" aria-hidden="true">Klipy · posuň do strany →</span>
   <ol class="tl-clips" aria-label="Klipy nad limitem skóre" aria-live="polite">
     {clips.map((c) => (
       <li class:list={['clip', { on: c.s >= LIMIT }]} data-s={c.s} data-x={c.x} data-d={c.d} style={`--h: ${hues[c.i]}`}>
@@ -150,6 +155,13 @@ const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
 
     input.addEventListener('input', render);
     root.querySelector('[data-tl-replay]')!.addEventListener('click', play);
+    const list = root.querySelector('.tl-clips')!;
+    for (const b of root.querySelectorAll<HTMLButtonElement>('[data-tl-fmt]')) {
+      b.addEventListener('click', () => {
+        list.classList.toggle('vert', b.dataset.tlFmt === 'vert');
+        root.querySelectorAll('[data-tl-fmt]').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+      });
+    }
 
     if (reduce.matches) { render(); continue; }
     progress = 0;
@@ -178,15 +190,15 @@ const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
 
   .tl-chart { position: relative; height: clamp(170px, 24vw, 280px); margin-top: 26px; }
   .tl-chart svg { width: 100%; height: 100%; display: block; clip-path: inset(0 calc((1 - var(--p)) * 100%) 0 0); }
-  .bar { fill: #5b4a33; transition: fill 0.35s; }
+  .bar { fill: #8a6a3e; transition: fill 0.35s; }
   .bar.over { fill: var(--wait); }
-  .vol { fill: none; stroke: var(--go); stroke-width: 2; stroke-linejoin: round; opacity: 0.9; }
+  .vol { fill: none; stroke: #9fb0a5; stroke-width: 1.25; stroke-linejoin: round; opacity: 0.45; }
   .tl-limit {
     position: absolute; left: 0; right: 0; top: var(--ly); border-top: 2px dashed rgba(238, 242, 238, 0.55);
     transition: top 0.35s var(--ease); pointer-events: none;
   }
   .tl-limit span {
-    position: absolute; right: 0; bottom: 4px; font-size: 0.78rem; color: var(--soft); background: rgba(16, 22, 18, 0.85);
+    position: absolute; left: 0; bottom: 4px; font-size: 0.78rem; color: var(--soft); background: rgba(16, 22, 18, 0.85);
     padding: 1px 8px; border-radius: 6px;
   }
   .mark { position: absolute; left: var(--x); top: 0; bottom: 0; width: 0; pointer-events: none; }
@@ -214,7 +226,7 @@ const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
   .tl-legend span { display: inline-flex; align-items: center; gap: 8px; }
   .tl-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
   .lg-bar { background: var(--wait); }
-  .lg-vol { background: var(--go); height: 3px !important; }
+  .lg-vol { background: #9fb0a5; opacity: 0.6; height: 2px !important; }
   .lg-lim { border-top: 2px dashed var(--soft); height: 0 !important; }
 
   .tl-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 6px; border-top: 1px solid var(--line); }
@@ -223,7 +235,21 @@ const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
   .tl-range output { font-family: var(--disp); font-weight: 800; font-size: 1.4rem; color: var(--wait); font-variant-numeric: tabular-nums; }
   .tl-range input { width: 100%; accent-color: var(--wait); height: 32px; cursor: pointer; }
 
+  .tl-swipe { display: none; }
+  .tl-fmt { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--bg-deep); border: 1px solid var(--line); }
+  .tl-fmt button { font: inherit; font-weight: 700; font-size: 0.9rem; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; transition: background-color 0.2s, color 0.2s; }
+  .tl-fmt button[aria-pressed='true'] { background: var(--text); color: var(--bg); }
   .tl-clips { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 12px; }
+  /* 9:16: celý obraz na rozmazaném pozadí, jako v ClipFarmu */
+  .tl-clips.vert { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); }
+  .vert .clip .thumb { aspect-ratio: 9 / 16; }
+  .clip .thumb::before {
+    content: ''; position: absolute; left: 0; right: 0; top: 50%; aspect-ratio: 16 / 9; translate: 0 -50%; opacity: 0;
+    background: inherit; border-block: 1px solid rgba(255, 255, 255, 0.25); transition: opacity 0.35s;
+  }
+  .vert .clip .thumb { filter: none; }
+  .vert .clip .thumb::before { opacity: 1; box-shadow: 0 0 0 999px rgba(10, 14, 12, 0.35); }
+  .clip .thumb { transition: opacity 0.35s, transform 0.45s var(--ease), aspect-ratio 0.35s var(--ease); }
   .clip { display: none; gap: 6px; }
   .clip.on { display: grid; }
   .clip .thumb {
@@ -242,11 +268,14 @@ const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
   @media (max-width: 640px) {
     .tl-tag { margin-left: 0; order: -1; }
     .tl-arrow { width: 32px; }
-    .mark .score { font-size: 0; padding: 0; width: 12px; height: 12px; border-radius: 99px; translate: -50% -160%; }
+    .mark:not(.top) .score { font-size: 0; padding: 0; width: 12px; height: 12px; border-radius: 99px; translate: -50% -160%; }
+    .mark.top .score { font-size: 0.72rem; padding: 0 5px; }
     .mark .band { left: -5px; width: 10px; }
     .tl-axis span:nth-child(even) { display: none; }
     /* klipy na mobilu v jedné vodorovné řadě (posun prstem) místo dlouhé mřížky */
-    .tl-clips { grid-auto-flow: column; grid-auto-columns: 128px; grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; margin-inline: calc(-1 * clamp(18px, 3vw, 34px)); padding-inline: clamp(18px, 3vw, 34px); scrollbar-width: thin; }
+    .tl-clips { grid-auto-flow: column; grid-auto-columns: 128px; grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; scrollbar-width: thin; }
     .clip { scroll-snap-align: start; }
+    .tl-clips { mask-image: linear-gradient(90deg, #000 85%, transparent); -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); }
+    .tl-swipe { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: -8px; }
   }
 </style>

@@ -57,9 +57,13 @@ Odkaz na instalačku je na **jediném místě**: `site.config.mjs`, konstanta `D
 export const DOWNLOAD_URL = 'https://…/ClipFarm-Setup-1.10.01.exe';
 ```
 
-Berou ho všechna tlačítka „Stáhnout pro Windows“ na všech stránkách. Dokud je prázdný (`''`), tlačítka vedou na
-stránku Stažení a tam je místo tlačítka napsané, že instalačku pošle správce. Po změně stačí `npm run build`
+Berou ho všechna tlačítka ke stažení na všech stránkách. Dokud je prázdný (`''`), tlačítka se jmenují
+„Jak získat ClipFarm“, vedou na stránku Stažení a tam je napsané, že instalačku zatím posílá správce. Po vyplnění
+se samy přejmenují na „Stáhnout pro Windows“ a vedou rovnou na soubor. Po změně stačí `npm run build`
 (nebo push do `main`, web se nasadí sám).
+
+Ve stejném souboru je **`CONTACT_URL`** – kontakt na správce (Discord server, `mailto:…`, web). Vyplněný přidá
+odkaz „Napsat správci“ na stránku Stažení, do Nápovědy a do patičky. Prázdný = nikde.
 
 ## Aktualizace changelogu (stránka Novinky)
 
@@ -73,7 +77,9 @@ npm run sync-changelog -- /cesta/k/ClipFarm   # když je repo aplikace jinde (ne
 git commit -am "Changelog v1.xx.xx" && git push   # web se nasadí sám
 ```
 
-Kopie je ve webu proto, že build na GitHubu k soukromému repu aplikace nemá přístup.
+Skript zároveň dohledá v git historii aplikace data vydání verzí, které je v changelogu nemají (den commitu,
+který nadpis verze přidal), a uloží je do `content/release-dates.json`. Kopie je ve webu proto, že build na
+GitHubu k soukromému repu aplikace nemá přístup.
 
 ## Nasazení na GitHub Pages krok za krokem
 
@@ -113,6 +119,7 @@ nastaví samy.
 | Podklad | Odkud | Licence |
 |---|---|---|
 | Brag videa a náhledy (`assets/brag/*/brag.mp4`, `brag.jpg`) – varianty cs-16x9, cs-tiktok-9x16, cs-yc-parody-16x9, en-16x9, en-tiktok-9x16 | `ClipFarm/brag-output/` | vlastní materiál ClipFarmu |
+| Menší webové verze videí (`brag-540.mp4` u 9:16, `brag-640.mp4` u 16:9 pro mobily) | vyrobené z originálů skriptem `scripts/optimize-videos.sh` (ffmpeg); při výměně videí ho spusť znovu | dtto |
 | Hudba ve videích: „Happy Beats / Business Moves“ Vol. 9 (16:9), Vol. 10 (TikTok), Vol. 1 (pitch deck) – Sascha Ende, [ende.app](https://ende.app/en) | přibalená ve videích | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) – uvedení autora je v patičce webu |
 | Zvukové efekty ve videích | [Kenney.nl](https://kenney.nl) | CC0 |
 | Screenshoty aplikace (`assets/screenshots/ui-*.png`) | `ClipFarm/docs/` | vlastní materiál ClipFarmu |

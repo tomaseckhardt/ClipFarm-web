@@ -28,10 +28,10 @@ import { url, contactUrl } from '../lib/site.ts';
       </ul>
     </nav>
     <div class="groups">
-      {FAQ.map((g) => (
+      {FAQ.map((g, gi) => (
         <section class="group" id={g.id} aria-labelledby={`h-${g.id}`}>
           <h2 id={`h-${g.id}`}>{g.title}</h2>
-          <FaqList items={g.items} />
+          <FaqList items={g.items} openFirst={gi === 0 ? 2 : 0} />
         </section>
       ))}
       <div class="card still" data-reveal>

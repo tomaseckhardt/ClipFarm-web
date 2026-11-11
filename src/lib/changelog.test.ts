@@ -59,3 +59,10 @@ test('skutečný content/CHANGELOG.md má verze a každá má obsah', () => {
   assert.match(r[0].version, /^v\d+\.\d{2}\.\d{2}$/);
   for (const x of r) assert.ok(x.groups.some((g) => g.items.length), x.version);
 });
+
+test('skryje odkazy na issue a vytáhne shrnutí z tučných začátků', async () => {
+  const { stripIssueRefs, highlights } = await import('./changelog.ts');
+  assert.equal(stripIssueRefs('Rychlejší (#55). Instalačka (#35–#39) a (#40, #41).'), 'Rychlejší. Instalačka a.');
+  const [r] = parseChangelog('## v1.0.01\n\nOpravy:\n\n- **Oprava:** x\n\nNové:\n\n- **Pole kamery:** y (#55)\n- bez tučného\n');
+  assert.deepEqual(highlights(r), ['Pole kamery', 'Oprava']);
+});

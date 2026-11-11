@@ -63,3 +63,22 @@ export function czDate(iso: string): string {
   const [y, m, d] = iso.split('-').map(Number);
   return `${d}. ${m}. ${y}`;
 }
+
+/** Odkazy na issue soukromého repa („(#55)“, „(#35–#39)“, „(#40, #41)“) návštěvníkovi nic neřeknou – na webu je skryjeme. */
+export function stripIssueRefs(text: string): string {
+  return text.replace(/\s*\(#\d+(?:\s*[–-]\s*#?\d+)?(?:,\s*#\d+)*\)/g, '');
+}
+
+/** Krátké shrnutí verze: tučné začátky odrážek („**Pole kamery:** …“ → „Pole kamery“), nejdřív z „Nové“, nejvýš `max`. */
+export function highlights(r: Release, max = 4): string[] {
+  const order = [...r.groups.filter((g) => g.kind === 'new'), ...r.groups.filter((g) => g.kind !== 'new')];
+  const out: string[] = [];
+  for (const g of order) {
+    for (const it of g.items) {
+      const m = /^\*\*(.+?)\*\*/.exec(it);
+      if (m) out.push(stripIssueRefs(m[1]).replace(/[:.]\s*$/, '').trim());
+      if (out.length >= max) return out;
+    }
+  }
+  return out;
+}

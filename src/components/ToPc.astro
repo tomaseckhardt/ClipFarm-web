@@ -1,0 +1,19 @@
+---
+// Jen na úzkých displejích: ClipFarm je program pro počítač → poslat si odkaz (sdílení / zkopírování, site.ts).
+interface Props { class?: string; style?: string }
+const { class: cls, style } = Astro.props;
+---
+<div class:list={['to-pc', cls]} style={style} data-share-box hidden>
+  <span><strong>Jsi na mobilu?</strong> ClipFarm je program pro počítač.</span>
+  <button type="button" class="btn btn-ghost btn-sm" data-share>Poslat si odkaz do PC</button>
+</div>
+
+<style>
+  .to-pc { display: none; }
+  @media (max-width: 760px) {
+    :global(.js) .to-pc:not([hidden]) {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 12px 14px; border-radius: 14px;
+      border: 1px dashed var(--line2); font-size: 0.92rem; color: var(--soft); text-align: left;
+    }
+  }
+</style>

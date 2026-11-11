@@ -1,6 +1,6 @@
 ---
-// Kalkulačka: kolik hodin streamu týdně / měsíčně by člověk musel projet a kolik místa zabere zdroj.
-// Jen násobení: GB za hodinu podle kvality jsou z README ClipFarmu (720p ~1,5 · 1080p ~3,5 · 1440p ~6,5).
+// Kalkulačka místa na disku: délka streamu × streamy týdně × GB za hodinu podle kvality
+// (čísla z README ClipFarmu: 720p ~1,5 · 1080p ~3,5 · 1440p ~6,5 GB za hodinu).
 const GB = { 720: 1.5, 1080: 3.5, 1440: 6.5 };
 const H = 3, N = 4, Q = 1080;
 const fmt = (n: number) => n.toLocaleString('cs-CZ', { maximumFractionDigits: 0 });
@@ -26,10 +26,10 @@ const fmt = (n: number) => n.toLocaleString('cs-CZ', { maximumFractionDigits: 0 
   </div>
   <div class="calc-out" aria-live="polite">
     <div class="big">
-      <span class="num" data-res="week">{fmt(H * N)}</span><span class="unit">h streamu týdně</span>
+      <span class="num" data-res="disk">{fmt(H * N * GB[Q])}</span><span class="unit">GB týdně</span>
     </div>
-    <p class="sub">to je <strong data-res="month">{fmt(H * N * 4.35)} h</strong> měsíčně, které bys musel projet, abys našel pointy. ClipFarm je najde podle chatu a hlasitosti – klidně v noci, zatímco spíš.</p>
-    <p class="disk">Zdrojové video zabere zhruba <strong data-res="disk">{fmt(H * N * GB[Q])} GB</strong> týdně. Zdroje starší než 30 dní ClipFarm nabídne smazat, klipy zůstanou.</p>
+    <p class="sub">Tolik místa zabere nahrané zdrojové video (<span data-res="week">{fmt(H * N)}</span> h streamu týdně). Klipy jsou proti tomu malé.</p>
+    <p class="disk">Zdroje starší než 30 dní ClipFarm sám nabídne smazat – klipy, náhledy i chat zůstanou, jen stream už nepůjde přestříhat. Bez potvrzení nesmaže nic.</p>
   </div>
 </div>
 
@@ -50,8 +50,7 @@ const fmt = (n: number) => n.toLocaleString('cs-CZ', { maximumFractionDigits: 0 
       h.setAttribute('aria-valuetext', `${H} ${hours(H)}`);
       n.setAttribute('aria-valuetext', `${N} ${streams(N)}`);
       set('[data-res="week"]', fmt(H * N));
-      set('[data-res="month"]', `${fmt(H * N * 4.35)} h`);
-      set('[data-res="disk"]', `${fmt(H * N * gb[q])} GB`);
+      set('[data-res="disk"]', fmt(H * N * gb[q]));
     };
     root.addEventListener('input', render);
     render();

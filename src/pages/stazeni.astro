@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import DownloadCards from '../components/DownloadCards.astro';
 import DownloadButton from '../components/DownloadButton.astro';
 import Icon from '../components/Icon.astro';
+import DiskCalc from '../components/DiskCalc.astro';
+import ToPc from '../components/ToPc.astro';
 import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
 ---
 <Base title="Stažení" description="Stáhni ClipFarm pro Windows (instalačka ClipFarm.exe) nebo nainstaluj na Linuxu. 14 dní zkušební verze zdarma, systémové požadavky a postup instalace krok za krokem.">
@@ -15,6 +17,7 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
         Na Windows jako normální program s instalačkou, na Linuxu z gitu. Prvních 14 dní je celý ClipFarm zdarma –
         žádné ořezané funkce, žádný vodoznak, žádná kreditka.
       </p>
+      <ToPc class="enter" style="--i: 3; margin-top: 20px" />
       <p class="ver enter" style="--i: 3">
         <a class="chip" href={url(`novinky/#${latest.id}`)}>Aktuální verze <strong>{latest.version}</strong> · co je nového <Icon name="arrow" size={16} /></a>
       </p>
@@ -55,8 +58,8 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
           </li>
         </ol>
       </div>
-      <div class="split-visual" aria-hidden="true">
-        <p class="illus">Takhle to vypadá ve Windows</p>
+      <div class="split-visual illus-frame" aria-hidden="true">
+        <p class="illus">Ilustrace · takhle to vypadá ve Windows</p>
         <div class="ss" data-reveal>
           <div class="ss-head"><Icon name="shield" size={22} /> Systém Windows ochránil váš počítač</div>
           <p>Filtr SmartScreen v programu Windows Defender zabránil spuštění nerozpoznané aplikace…</p>
@@ -76,7 +79,7 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
       <h2 id="h-trial">Zkušební verze a přístup</h2>
       <div class="cols3">
         <div><h3>14 dní celý ClipFarm</h3><p class="muted">Kdo se do ClipFarm.exe přihlásí poprvé, dostane celý ClipFarm na 14 dní. Žádné ořezané funkce, žádný vodoznak, žádná kreditka.</p></div>
-        <div><h3>Co potom</h3><p class="muted">Okno řekne „Zkušební doba skončila“ a nabídne <strong>Mám zájem o přístup</strong>. Správce ClipFarmu to uvidí a přístup ti povolí – natrvalo, nebo na dobu určitou (třeba po měsících). Cenu tenhle web neuvádí. Klipy ze zkušební doby nikam nemizí.</p></div>
+        <div><h3>Co potom</h3><p class="muted">Okno řekne „Zkušební doba skončila“ a nabídne <strong>Mám zájem o přístup</strong>. Správce ClipFarmu to uvidí a přístup ti povolí – natrvalo, nebo na dobu určitou (třeba po měsících); podmínky ti řekne on. Sám od sebe ClipFarm nic nestrhává, kartu jsi nikam nezadával. Klipy ze zkušební doby nikam nemizí.</p></div>
         <div><h3>Ověření přístupu</h3><p class="muted">Při každém spuštění a pak každých 6 hodin. Bez internetu ClipFarm 3 dny jede normálně, potom jen galerie, střih a přestříhání.</p></div>
       </div>
     </div>
@@ -118,13 +121,15 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
           <tr><th scope="row">Instalace</th><td data-os="Windows">Instalačka, jen pro tebe, bez administrátorských práv</td><td data-os="Linux">Z gitu (soukromý repozitář, jen pro pozvané), <code>bash instalace-linux.sh</code></td></tr>
           <tr><th scope="row">Přihlášení</th><td data-os="Windows">Discord, 14 dní zkušební verze</td><td data-os="Linux">Bez přihlášení</td></tr>
           <tr><th scope="row">Aktualizace</th><td data-os="Windows">Jedním klikem, kontrola SHA256</td><td data-os="Linux">Jedním klikem přes <code>git pull</code></td></tr>
-          <tr><th scope="row">Okno</th><td colspan="2" data-os="Windows i Linux">Aplikace v prohlížeči (Chrome, Edge, Brave, Vivaldi nebo Chromium v režimu okna, jinak běžná karta) na <code>clipfarm.localhost:8765</code></td></tr>
-          <tr><th scope="row">Místo na disku</th><td colspan="2" data-os="Windows i Linux">Za hodinu streamu: 720p ~1,5 GB · 1080p ~3,5 GB · 1440p ~6,5 GB. Zdroje starší než 30 dní ClipFarm nabídne ke smazání.</td></tr>
-          <tr><th scope="row">Internet</th><td colspan="2" data-os="Windows i Linux">Na stahování a nahrávání (a na přihlášení u ClipFarm.exe)</td></tr>
-          <tr><th scope="row">macOS</th><td colspan="2" data-os="Windows i Linux">Není podporovaný</td></tr>
+          <tr><th scope="row">Okno</th><td colspan="2" data-os="Oba systémy">Aplikace v prohlížeči (Chrome, Edge, Brave, Vivaldi nebo Chromium v režimu okna, jinak běžná karta) na <code>clipfarm.localhost:8765</code></td></tr>
+          <tr><th scope="row">Místo na disku</th><td colspan="2" data-os="Oba systémy">Za hodinu streamu: 720p ~1,5 GB · 1080p ~3,5 GB · 1440p ~6,5 GB. Zdroje starší než 30 dní ClipFarm nabídne ke smazání.</td></tr>
+          <tr><th scope="row">Internet</th><td colspan="2" data-os="Oba systémy">Na stahování a nahrávání (a na přihlášení u ClipFarm.exe)</td></tr>
+          <tr><th scope="row">macOS</th><td colspan="2" class="no-label">Není podporovaný</td></tr>
         </tbody>
       </table>
     </div>
+    <h3 class="calc-h" id="misto">Kolik místa na disku budeš potřebovat?</h3>
+    <div data-reveal><DiskCalc /></div>
   </section>
 
   <section class="wrap block more" aria-label="Další informace">
@@ -147,7 +152,7 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
   <section class="wrap block">
     <div class="end-cta" data-reveal>
       <div>
-        <h2>Připraveno?</h2>
+        <h2>{hasDownload ? 'Připraveno?' : 'Chceš vědět víc?'}</h2>
         <p class="muted">Něco nejde? Mrkni do <a href={url('napoveda/')}>nápovědy</a>.</p>
       </div>
       {hasDownload ? <DownloadButton /> : contactUrl ? <a class="btn btn-go btn-big" href={contactUrl} rel="noopener">Napsat správci <Icon name="arrow" size={20} /></a> : <a class="btn btn-ghost btn-big" href={url('jak-to-funguje/')}>Jak ClipFarm funguje <Icon name="arrow" size={20} /></a>}
@@ -194,6 +199,10 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
   td { color: var(--soft); }
   tbody tr:last-child > * { border-bottom: 0; }
   tbody tr:hover { background: rgba(21, 28, 24, 0.6); }
+  .calc-h { font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.7rem); margin: 40px 0 18px; }
+  .illus-frame { border: 1px dashed var(--line2); border-radius: 22px; padding: 18px; cursor: default; user-select: none; }
+  .illus-frame .ss, .illus-frame .login { pointer-events: none; }
+  .illus-frame .discord-btn { background: #4b55c4; }
   .illus { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
   @media (max-width: 700px) {
     .table-wrap { overflow: visible; border: 0; }
@@ -204,6 +213,7 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
     tr { border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px; background: var(--surface); }
     tbody th { width: auto; padding: 0 0 6px; border: 0; color: var(--text); font-family: var(--disp); font-size: 1.05rem; }
     td { padding: 6px 0; border: 0; }
+    td.no-label::before { content: none; }
     td::before { content: attr(data-os); display: block; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--go); font-weight: 700; }
     tbody tr:hover { background: var(--surface); }
   }

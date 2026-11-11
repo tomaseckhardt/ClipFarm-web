@@ -156,20 +156,20 @@ const maxN = Math.max(...table.map((r) => r.n));
       <article class="card" data-reveal style="--i: 1">
         <h3>Doladit střih (ministudio)</h3>
         <p class="muted">Přehled 5 minut před klipem a 5 minut po něm, přiblížená časová osa se snímky, hlasitostí, chatem po sekundách a oranžovou značkou vrcholu. Úchyty se při puštění přichytí k nejbližší pauze ve zvuku (s Alt ne). <strong>Uložit a přestříhat</strong> přestříhá jen tenhle klip.</p>
-        <dl class="keys">
-          <div><dt><kbd>Mezerník</kbd></dt><dd>přehrát / zastavit</dd></div>
-          <div><dt><kbd>I</kbd> <kbd>O</kbd></dt><dd>začátek / konec tam, kde stojí přehrávač</dd></div>
-          <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>o 1 s (se Shift 0,1 s)</dd></div>
-          <div><dt><kbd>J</kbd> <kbd>L</kbd></dt><dd>o 5 s</dd></div>
-          <div><dt><kbd>K</kbd></dt><dd>stop</dd></div>
-          <div><dt><kbd>+</kbd> <kbd>−</kbd></dt><dd>přiblížit / oddálit</dd></div>
-        </dl>
       </article>
       <article class="card" data-reveal style="--i: 2">
         <h3>Galerie a stažení</h3>
         <p class="muted">Všechny klipy jako karty s náhledem z vrcholu reakce, ★ skóre a délkou. Filtr podle streamera, řazení Nejlepší / Nejnovější. Vybrané klipy stáhneš jako jeden ZIP a soubory se jmenují podle streamera a data.</p>
       </article>
     </div>
+      <div class="card keys-card" data-reveal><h3>Klávesy v Doladit střih</h3><dl class="keys">
+        <div><dt><kbd>Mezerník</kbd></dt><dd>přehrát / zastavit</dd></div>
+        <div><dt><kbd>I</kbd> <kbd>O</kbd></dt><dd>začátek / konec tam, kde stojí přehrávač</dd></div>
+        <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>o 1 s (se Shift 0,1 s)</dd></div>
+        <div><dt><kbd>J</kbd> <kbd>L</kbd></dt><dd>o 5 s</dd></div>
+        <div><dt><kbd>K</kbd></dt><dd>stop</dd></div>
+        <div><dt><kbd>+</kbd> <kbd>−</kbd></dt><dd>přiblížit / oddálit</dd></div>
+      </dl></div>
   </section>
 
   <!-- 7. TYPICKÝ POSTUP -->
@@ -261,7 +261,8 @@ const maxN = Math.max(...table.map((r) => r.n));
   .fcam .face { background: radial-gradient(30% 40% at 50% 45%, #c48a6c 60%, transparent 61%), linear-gradient(160deg, #6b4a3b, #3d2a24); border-radius: 8px 8px 0 0; }
   .fcam .game { background: linear-gradient(180deg, #3b3a6b, #5a3f73 55%, #2c5a3a 56%); border-radius: 0 0 8px 8px; }
   figcaption { display: grid; gap: 6px; }
-  .keys { margin: 4px 0 0; display: grid; gap: 8px; }
+  .keys-card { margin-top: 20px; }
+  .keys { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 24px; }
   .keys div { display: flex; gap: 12px; align-items: baseline; }
   .keys dt { flex: none; min-width: 108px; }
   .keys dd { margin: 0; color: var(--muted); font-size: 0.92rem; }
@@ -275,7 +276,10 @@ const maxN = Math.max(...table.map((r) => r.n));
     .cards3, .signals, .after, .fmts { grid-template-columns: 1fr; }
     .limits, .rules { grid-template-columns: 1fr; }
   }
+  @media (max-width: 960px) { .keys { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) {
+    .keys { grid-template-columns: 1fr; }
+    .cl-mark em { display: none; }
     .cutline { padding: 56px 8px 100px; }
     .cl-mark { width: 110px; font-size: 0.78rem; }
     .cl-mark em { font-size: 0.72rem; }

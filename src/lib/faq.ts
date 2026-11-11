@@ -23,8 +23,8 @@ export const FAQ: FaqGroup[] = [
         a: `<p><strong>Prvních 14 dní ano.</strong> Nový účet dostane celý ClipFarm na zkoušku: žádné ořezané funkce,
           žádný vodoznak, žádná kreditka. Nahoře v okně svítí „Zkušební verze · zbývá N dní“, ať tě konec nepřekvapí.</p>
           <p>Potom přístup povoluje správce ClipFarmu: okno nabídne <strong>Mám zájem o přístup</strong>, správce to uvidí
-          a přístup ti povolí – natrvalo, nebo na dobu určitou (třeba po měsících). Cenu tenhle web neuvádí, zeptej se
-          správce. Klipy ze zkušební doby ti zůstanou v každém případě.</p>`,
+          a přístup ti povolí – natrvalo, nebo na dobu určitou (třeba po měsících); podmínky ti řekne on. Sám od sebe
+          ClipFarm nic nestrhává, kartu jsi nikam nezadával. Klipy ze zkušební doby ti zůstanou v každém případě.</p>`,
       },
       {
         id: 'system',
@@ -34,7 +34,8 @@ export const FAQ: FaqGroup[] = [
           <li><strong>Windows:</strong> jako normální program (ClipFarm.exe) s instalačkou.</li>
           <li><strong>Linux</strong> (Fedora 41+, Ubuntu 24.04+, Debian 13+, Arch): z gitu přes <code>instalace-linux.sh</code>.</li>
           <li><strong>macOS</strong> podporovaný není.</li></ul>
-          <p>Vyzkoušené na Linuxu (Fedora) a na Windows (ClipFarm.exe na dvou počítačích).</p>`,
+          <p>Autor ho zkouší na Linuxu (Fedora) a na Windows (ClipFarm.exe, zatím na dvou počítačích). Kdyby u tebe
+          něco nešlo, <strong>Nastavení → Uložit diagnostiku</strong> pomůže chybu rychle najít.</p>`,
       },
       {
         id: 'smartscreen',
@@ -75,6 +76,22 @@ export const FAQ: FaqGroup[] = [
           ne <code>01.mp4</code>.</p>
           <p>Na disku: ClipFarm.exe je má v <code>Dokumenty\\ClipFarm\\klipy</code>, gitová verze ve složce
           <code>klipy/</code> vedle <code>Klipy.py</code>.</p>`,
+      },
+      {
+        id: 'co-dostanu',
+        q: 'Co přesně dostanu?',
+        a: `<p>Klipy jako běžná videa MP4 (01.mp4, 02.mp4…) a ke každému náhled ze snímku ve vrcholu reakce. Klipy mají
+          stejné rozlišení jako zdroj, na výšku 9:16 vždy 1080×1920. Ve složce streamu zůstane i zdrojové video a chat,
+          takže jde kdykoli přestříhat s jiným limitem nebo formátem.</p>
+          <p>Nahrát klip na TikTok nebo YouTube už je na tobě – v okně ho stáhneš jedním klikem, víc klipů jako ZIP.</p>`,
+      },
+      {
+        id: 'vic-kanalu',
+        q: 'Můžu hlídat víc kanálů naráz?',
+        a: `<p>Ano. Každý kanál je samostatná úloha v kartě <strong>Běží</strong> s vlastním logem a vlastním Stop – třeba
+          dvě hlídání Kicku přes noc. Stejný kanál dvakrát naráz spustit nejde.</p>
+          <p>Pozor: živák se nahrává od chvíle, kdy ho spustíš, ne od začátku streamu (chat taky). Proto se hodí zapnout
+          <strong>Spustit, až bude živě</strong> dopředu – ClipFarm počká na začátek sám.</p>`,
       },
       {
         id: 'misto',
@@ -186,7 +203,7 @@ export const FAQ: FaqGroup[] = [
       },
       {
         id: 'ikona',
-        q: 'Ikona ClipFarmu nic neotevře.',
+        q: 'Na Linuxu ikona ClipFarmu nic neotevře.',
         a: `<p>Na Linuxu spusť v terminálu <code>python3 ClipFarm.py</code> a uvidíš chybu.</p>`,
       },
       {

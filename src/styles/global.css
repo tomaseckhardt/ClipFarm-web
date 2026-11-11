@@ -128,7 +128,7 @@ a.chip:hover { border-color: var(--go); color: var(--text); }
 .js [data-reveal].in { opacity: 1; transform: none; }
 
 /* vstup prvků nahoře na stránce: jen CSS, hned při načtení */
-.enter { animation: enter 0.9s var(--ease) both; animation-delay: calc(var(--i, 0) * 90ms); }
+.enter { animation: enter 0.7s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
 @keyframes enter { from { opacity: 0; transform: translateY(18px); } }
 
 /* text s jemným pohybem gradientu (nadpisy) */
