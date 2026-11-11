@@ -32,7 +32,7 @@ const { onDownloadPage = false } = Astro.props;
       ) : (
         <DownloadButton />
       )}
-      <p class="muted small warn"><Icon name="shield" size={16} /><span>Windows napoprvé varuje, protože instalačka není podepsaná: <strong>Další informace → Přesto spustit</strong>.</span></p>
+      <p class="muted small warn"><Icon name="shield" size={16} /><span>Windows napoprvé varuje, protože instalačka není podepsaná: <strong>Další informace → Přesto spustit</strong>. <a href={url('stazeni/#soukromi')}>Co ClipFarm posílá ven</a></span></p>
     </div>
   </article>
 

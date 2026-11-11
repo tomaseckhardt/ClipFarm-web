@@ -255,6 +255,13 @@ export const FAQ: FaqGroup[] = [
           <strong>Spustit, až bude živě</strong>: počká na začátek streamu sám.</p>`,
       },
       {
+        id: 'prava',
+        q: 'Smím zveřejnit klipy z cizího kanálu?',
+        a: `<p>To už je na tobě, ne na ClipFarmu. Stahuje jen veřejná videa a nahrává veřejné živé streamy, stejně jako by
+          je sis pustil v prohlížeči. Co s klipy uděláš dál, se řídí pravidly streamera a platformy, kam je nahráváš –
+          když si nejsi jistý, zeptej se streamera.</p>`,
+      },
+      {
         id: 'brb',
         q: 'Může ClipFarm vybrat i nesmysl?',
         a: `<p>Občas. Prolínačka mezi scénami bez ztišení se pozná jen podle obrazu, ne vždy. A výpadek streamu

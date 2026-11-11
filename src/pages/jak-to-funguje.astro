@@ -22,6 +22,11 @@ const maxN = Math.max(...table.map((r) => r.n));
         a&nbsp;hlasitost streamu. Tady je přesně jak.
       </p>
       <p class="tldr enter" style="--i: 3"><span>Ve zkratce:</span> chat a hlasitost <b>→</b> skóre každé sekundy <b>→</b> klip z každého výrazného momentu, typicky 20–60 s</p>
+      <nav class="jump enter" style="--i: 4" aria-label="Sekce stránky">
+        <a href="#zdroje"><b>1</b> Zdroje</a><a href="#skore"><b>2</b> Skóre</a><a href="#limit"><b>3</b> Limit</a>
+        <a href="#hranice"><b>4</b> Hranice klipu</a><a href="#formaty"><b>5</b> Formáty</a><a href="#po-streamu"><b>6</b> Po streamu</a>
+        <a href="#postup">Typický postup</a>
+      </nav>
     </div>
   </section>
 
@@ -195,6 +200,11 @@ const maxN = Math.max(...table.map((r) => r.n));
 
 <style>
   .tldr { margin-top: 26px; display: inline-flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 12px 18px; border-radius: 16px; border: 1px solid rgba(94, 224, 138, 0.3); background: rgba(94, 224, 138, 0.06); color: var(--soft); }
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .jump a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px 0 6px; border-radius: 999px; border: 1px solid var(--line2); background: var(--surface); color: var(--soft); text-decoration: none; font-weight: 600; font-size: 0.92rem; transition: border-color 0.2s, color 0.2s; }
+  .jump a:last-child { padding-left: 14px; }
+  .jump a:hover { border-color: var(--go); color: var(--text); }
+  .jump b { width: 28px; height: 28px; border-radius: 99px; display: grid; place-items: center; background: var(--go); color: var(--go-text); font-size: 0.85rem; }
   .tldr span { color: var(--go); font-weight: 700; }
   .tldr b { color: var(--wait); }
   .block { padding-block: clamp(36px, 5vw, 72px); }

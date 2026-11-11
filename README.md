@@ -119,6 +119,8 @@ nastaví samy.
 | Podklad | Odkud | Licence |
 |---|---|---|
 | Brag videa a náhledy (`assets/brag/*/brag.mp4`, `brag.jpg`) – varianty cs-16x9, cs-tiktok-9x16, cs-yc-parody-16x9, en-16x9, en-tiktok-9x16 | `ClipFarm/brag-output/` | vlastní materiál ClipFarmu |
+| OG obrázek (`assets/og.jpg`) | `scripts/make-og.mjs`: brag.jpg + značka ze závěrečného snímku hlavního videa | dtto |
+| Screenshot Běží pro web (`ui-bezi-web.png`) | `scripts/blur-screenshot.mjs`: rozmazaná jména kanálů a řádek logu | dtto |
 | Menší webové verze videí (`brag-540.mp4` u 9:16, `brag-640.mp4` u 16:9 pro mobily) | vyrobené z originálů skriptem `scripts/optimize-videos.sh` (ffmpeg); při výměně videí ho spusť znovu | dtto |
 | Hudba ve videích: „Happy Beats / Business Moves“ Vol. 9 (16:9), Vol. 10 (TikTok), Vol. 1 (pitch deck) – Sascha Ende, [ende.app](https://ende.app/en) | přibalená ve videích | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) – uvedení autora je v patičce webu |
 | Zvukové efekty ve videích | [Kenney.nl](https://kenney.nl) | CC0 |

@@ -87,3 +87,13 @@ Závislosti (přesné verze v `package-lock.json`): `astro` (+ `sharp` na obráz
   adresáře. Obojí je v REVIEW.md jako doporučení.
 - **Cena:** README ji neuvádí, web říká jen to, co platí (přístup povoluje správce, i na dobu určitou) a že cenu
   neuvádí.
+- **OG obrázek:** zadání říká „z brag.jpg“ – brag.jpg ale nemá logo ani název (náhled na Discordu pak neříká, co
+  to je). `scripts/make-og.mjs` proto do jeho prázdné spodní části vloží značku ze závěrečného snímku téhož videa.
+  Pořád je to brag.jpg, jen s logem.
+- **Screenshot „Běží“:** jména skutečných kanálů a řádek logu („…impersonation…“) jsou na webu rozmazané
+  (`scripts/blur-screenshot.mjs`), nic není přepsané na smyšlené; popisek to přiznává. Originál je beze změny.
+- **Videa na mobilu** se spouští až ťuknutím (velké tlačítko Přehrát). iOS pomalé připojení nehlásí, takže jiná
+  pojistka nefunguje. Na desktopu se dál spouští sama, když jsou vidět.
+- **Kalkulačka:** původně „kolik hodin streamu“ na úvodu; recenzenti ji označili za pouhé násobení, proto je teď na
+  Stažení jako „Kolik místa na disku budeš potřebovat?“.
+- **Počet kol:** 3. Co zbylo, potřebuje údaje od majitele (REVIEW.md, konec).

@@ -21,7 +21,7 @@ const descId = `${id ?? src.replace(/\W+/g, '-')}-desc`;
     aria-label={label} aria-describedby={descId}
   >{mobileSrc && <source src={mobileSrc} media="(max-width: 700px)" type="video/mp4" />}{mobileSrc && <source src={src} type="video/mp4" />}</video>
   <p class="sr" id={descId}>{description}</p>
-  <button type="button" class="big-play" data-act="play" aria-label="Přehrát video" tabindex="-1"><Icon name="play" size={30} /></button>
+  <button type="button" class="big-play" data-act="play" aria-label="Přehrát video"><Icon name="play" size={30} /></button>
   <div class="controls">
     <button type="button" class="ctl" data-act="play" aria-label="Přehrát video">
       <span class="i-play"><Icon name="play" size={18} /></span><span class="i-pause"><Icon name="pause" size={18} /></span>
@@ -64,6 +64,7 @@ const descId = `${id ?? src.replace(/\W+/g, '-')}-desc`;
   }
   .big-play:hover { transform: scale(1.06); }
   .player:global(.manual:not(.playing)) .big-play { display: grid; }
+  .player:global(.manual:not(.playing)) .ctl[data-act='play'] { display: none; }
   /* malé video (mobil): jen ikony, ale dost velké pro palec */
   @media (max-width: 640px) {
     .controls { left: 8px; bottom: 8px; gap: 6px; }

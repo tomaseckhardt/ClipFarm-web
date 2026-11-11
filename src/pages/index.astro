@@ -29,17 +29,21 @@ import enMainPoster from '../../assets/brag/en-16x9/brag.jpg';
 
 import shotKlipy from '../../assets/screenshots/ui-klipy.png';
 import shotDetail from '../../assets/screenshots/ui-detail.png';
-import shotBezi from '../../assets/screenshots/ui-bezi.png';
+import shotBezi from '../../assets/screenshots/ui-bezi-web.png';
 import shotVarovani from '../../assets/screenshots/ui-varovani.png';
 import shotNovinky from '../../assets/screenshots/ui-novinky.png';
 
+import { getImage } from 'astro:assets';
+const zoom: Record<string, string> = {};
+
 const shots = [
-  { id: 'bezi', tab: 'Nahrávání', img: shotBezi, alt: 'Karta Běží: Nastavení, nahrávání Kicku s odpočtem a logem, hlídání kanálu', text: 'Karta Běží: nahrávání živáku s odpočtem „zbývá 47 min“, hlídání dalšího kanálu a Nastavení (kvalita, limit skóre, klipy na výšku, Spustit, až bude živě).' },
+  { id: 'bezi', tab: 'Nahrávání', img: shotBezi, alt: 'Karta Běží: Nastavení, nahrávání Kicku s odpočtem a logem, hlídání kanálu', text: 'Karta Běží: nahrávání živáku s odpočtem „zbývá 47 min“, hlídání dalšího kanálu a Nastavení (kvalita, limit skóre, klipy na výšku, Spustit, až bude živě). Jména kanálů a řádek logu jsme rozmazali.' },
   { id: 'klipy', tab: 'Galerie klipů', img: shotKlipy, alt: 'Galerie klipů: karty s náhledem a skóre, filtr podle streamera, vybrané klipy ke stažení', text: 'Galerie: skutečné klipy jako karty s náhledem z vrcholu reakce, ★ skóre a délkou. Filtr podle streamera, řazení Nejlepší / Nejnovější, hromadné stažení jako ZIP.' },
   { id: 'detail', tab: 'Detail klipu', img: shotDetail, alt: 'Detail klipu: přehrávač, pás snímků se značkou vrcholu, posuvníky začátku a konce, akce klipu', text: 'Detail klipu s přehrávačem, pásem snímků a značkou vrcholu. Vpravo tabulka, kolik klipů by dal který limit. Od v1.10.01 je místo posuvníků ministudio s časovou osou, hlasitostí a chatem.' },
   { id: 'varovani', tab: 'Aktualizace', img: shotVarovani, alt: 'Varování po spuštění: nová verze ClipFarmu, tlačítka Později a Aktualizovat teď', text: 'Nová verze? Okno to řekne po spuštění. ⬆ Aktualizovat teď, nebo Později – nic se nestáhne bez kliknutí.' },
   { id: 'novinky', tab: 'Co je nového', img: shotNovinky, alt: 'Co je nového: změny od verze, kterou jsi měl, tlačítko OK', text: 'Po aktualizaci okno samo ukáže, co je nového od verze, kterou jsi měl.' },
 ];
+for (const sh of shots) zoom[sh.id] = (await getImage({ src: sh.img, width: 1280, format: 'webp', quality: 82 })).src;
 ---
 <Base description="ClipFarm z dlouhých streamů (YouTube, Kick) automaticky najde nejlepší momenty podle reakcí chatu a hlasitosti a nastříhá z nich klipy – na šířku i na výšku 9:16 pro Shorts, TikTok a Reels. Pro Windows (14 dní zdarma) a Linux.">
   <!-- HERO -->
@@ -205,7 +209,7 @@ const shots = [
         <li><Icon name="replay" /><span><strong>Přestříhat bez stahování</strong> s jiným limitem nebo formátem.</span></li>
         <li><Icon name="clock" /><span><strong>Neuspí počítač</strong>, dokud něco běží.</span></li>
         <li><Icon name="download" /><span><strong>Hromadné stažení</strong> klipů jako ZIP s rozumnými názvy.</span></li>
-        <li><Icon name="shield" /><span><strong>Aktualizace jedním klikem</strong> s kontrolou SHA256.</span></li>
+        <li><Icon name="shield" /><span><strong>Aktualizace jedním klikem</strong> – ClipFarm si ověří, že je instalačka pravá.</span></li>
       </ul>
     </div>
   </section>
@@ -234,7 +238,7 @@ const shots = [
         <div class="wide-sample" data-reveal style="--i: 2">
           <div class="seg" role="tablist" aria-label="Video na šířku">
             <button type="button" role="tab" id="tab-parody" aria-controls="panel-parody" aria-selected="true">Parodie</button>
-            <button type="button" role="tab" id="tab-en" aria-controls="panel-en" aria-selected="false" tabindex="-1">Hlavní video anglicky</button>
+            <button type="button" role="tab" id="tab-en" aria-controls="panel-en" aria-selected="false" tabindex="-1">Celé video (EN titulky)</button>
           </div>
           <div class="wide-frame">
             <div role="tabpanel" id="panel-parody" aria-labelledby="tab-parody">
@@ -270,7 +274,10 @@ const shots = [
           <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>clipfarm.localhost:8765</span></div>
           {shots.map((s, i) => (
             <div class="shot-panel" role="tabpanel" id={`sp-${s.id}`} aria-labelledby={`st-${s.id}`} hidden={i !== 0}>
-              <Picture src={s.img} alt={s.alt} widths={[640, 960, 1280]} sizes="(max-width: 1240px) 100vw, 1160px" formats={["avif", "webp"]} fallbackFormat="webp" loading="lazy" />
+              <a class="zoom" href={zoom[s.id]} aria-label={`${s.tab}: otevřít screenshot v plné velikosti`}>
+                <Picture src={s.img} alt={s.alt} widths={[640, 960, 1280]} sizes="(max-width: 1240px) 100vw, 1160px" formats={["avif", "webp"]} fallbackFormat="webp" loading="lazy" />
+                <span class="zoom-hint" aria-hidden="true">Zvětšit</span>
+              </a>
               <p class="shot-text">{s.text}</p>
             </div>
           ))}
@@ -290,6 +297,7 @@ const shots = [
         <p class="lead">Na Windows 14 dní celý ClipFarm na zkoušku – žádné ořezané funkce, žádný vodoznak, žádná kreditka. Klipy ze zkušební doby ti zůstanou.</p>
       </div>
       <DownloadCards />
+      <p class="not-yet" data-reveal><strong>Zatím neumí:</strong> <span>Twitch</span><span>macOS</span><span>Linux jen pro pozvané</span> <a href={url('napoveda/#omezeni')}>Všechna omezení</a></p>
       <p class="more-link" data-reveal><a href={url('stazeni/')}><span>Postup instalace a systémové požadavky</span> <Icon name="arrow" size={16} /></a></p>
     </div>
   </section>
@@ -511,11 +519,22 @@ const shots = [
   .browser-bar i { width: 11px; height: 11px; border-radius: 99px; background: var(--line2); }
   .browser-bar span { margin-left: 14px; font-size: 0.8rem; color: var(--muted); background: var(--bg-deep); border-radius: 8px; padding: 3px 14px; }
   .shot-panel :global(img) { width: 100%; height: auto; }
+  .zoom { position: relative; display: block; }
+  .zoom-hint { position: absolute; right: 12px; top: 12px; padding: 4px 10px; border-radius: 8px; font-size: 0.82rem; font-weight: 700; background: rgba(10, 14, 12, 0.8); color: var(--text); opacity: 0; transition: opacity 0.2s; }
+  .zoom:hover .zoom-hint, .zoom:focus-visible .zoom-hint { opacity: 1; }
+  @media (max-width: 640px) {
+    .zoom-hint { opacity: 1; }
+    .shot-tabs { flex-wrap: nowrap; overflow-x: auto; border-radius: 999px; justify-self: stretch; scrollbar-width: none; }
+    .shot-tabs button { flex: none; }
+  }
   .shot-panel:not([hidden]) { animation: fade-in 0.4s var(--ease); }
   @keyframes fade-in { from { opacity: 0; } }
   .shot-text { padding: 16px 20px; color: var(--soft); border-top: 1px solid var(--line); }
 
 
+  .not-yet { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 20px; color: var(--soft); font-size: 0.95rem; }
+  .not-yet span { padding: 3px 10px; border-radius: 8px; border: 1px solid rgba(255, 107, 107, 0.3); color: #ffb4b4; background: rgba(255, 107, 107, 0.06); }
+  .not-yet a { margin-left: 4px; }
   /* ZÁVĚR */
   .final-card {
     position: relative; text-align: center; display: grid; justify-items: center; gap: 20px; padding: clamp(48px, 8vw, 96px) var(--gutter);
@@ -550,7 +569,6 @@ const shots = [
     .float { font-size: 0.78rem; padding: 6px 10px; }
     .f2, .f4 { display: none; }
     .f1 { left: 4%; } .f3 { right: 4%; }
-    .shot-tabs { border-radius: 18px; }
     .hero .cta-row :global(.btn) { width: 100%; }
   }
   @media (prefers-reduced-motion: reduce) {

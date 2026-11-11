@@ -56,7 +56,7 @@ const hues = [150, 265, 200, 25, 320, 180, 95, 240, 10, 285, 130];
     </svg>
     <div class="tl-limit" data-tl-line style={`--ly: ${(y(LIMIT) / H) * 100}%`}><span>limit <b data-tl-limit-label>{cz(LIMIT)}</b></span></div>
     {clips.map((c) => (
-      <div class:list={['mark', { on: c.s >= LIMIT, top: c.s >= 4.5 }]} data-s={c.s} data-x={c.x} style={`--x: ${c.x * 100}%; --top: ${(y(c.s) / H) * 100}%`}>
+      <div class:list={['mark', { on: c.s >= LIMIT, top: c.s >= 5 }]} data-s={c.s} data-x={c.x} style={`--x: ${c.x * 100}%; --top: ${(y(c.s) / H) * 100}%`}>
         <span class="band"></span>
         <span class="score">★ <span class="v">{cz(c.s)}</span></span>
       </div>

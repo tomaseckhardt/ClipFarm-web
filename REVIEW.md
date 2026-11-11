@@ -134,3 +134,69 @@ v zadání).
 
 Build 0/0/0, testy 4/4, 6 stránek × desktop/mobil bez chyb v konzoli, žádný rozbitý odkaz ani kotva, nic
 nepřetéká, scroll 60 fps. Na mobilu ukázky čekají na ťuknutí a po ťuknutí hrají; macOS karta bez štítku.
+
+## Kolo 3
+
+### Vlastní průchod
+
+- Mobil: u telefonů v ukázkách bylo současně velké „Přehrát“ uprostřed a malé v rohu – dvě stejná tlačítka (opraveno,
+  malé se ukáže až při přehrávání; velké je ovladatelné klávesnicí).
+- Stránka Jak to funguje má na mobilu 11 000 px bez rozcestníku (přidán).
+- Informace „co ClipFarm neumí“ byly jen ve FAQ (přidán řádek u stažení).
+
+### Nezávislý recenzent (1 subagent s čistým kontextem, všechny čtyři pohledy)
+
+**Líbí se:** hero, graf s limitem a hratelné „Chat, ne spam“ („nejlepší části webu“), poctivost (zkušební doba,
+SmartScreen, macOS, Discord), kalkulačka disku, 404, šetrnost na pomalém připojení.
+
+| # | Nález | Závažnost | Co jsem udělal |
+|---|---|---|---|
+| 1 | Screenshot „Běží“: skutečná jména kanálů a log „…attempting impersonation…“ – skeptika vyděsí, nesedí s opatrností u klipů | vysoká | ✅ `scripts/blur-screenshot.mjs`: jména kanálů a řádek logu rozmazané (nic nepřepsané na smyšlené), v popisku to přiznávám. Originál beze změny. |
+| 2 | Nic o tom, co se smí s klipy z cizích kanálů | střední | ✅ FAQ „Smím zveřejnit klipy z cizího kanálu?“ (ClipFarm stahuje jen veřejné video; použití se řídí pravidly streamera a platformy). |
+| 3 | Důvěra rozházená po třech stránkách | střední | ✅ Blok „Co ClipFarm posílá ven“ na Stažení (zůstává u tebe / jde ven / jen když chceš – vše z README), odkaz na něj u varování SmartScreen. |
+| 4 | Mobil: štítky v grafu se překrývají | střední | ✅ Na mobilu čísla jen u dvou nejvyšších vrcholů (≥ 5), ostatní jako tečky + řada klipů pod grafem. |
+| 5 | Mobil: screenshot nečitelný, záložky ve třech řádcích | střední | ✅ Klepnutím „Zvětšit“ se otevře v plné velikosti; záložky v jedné vodorovně posuvné řadě. |
+| 6 | Mobil: hero video se spouští samo (iOS pomalé připojení nehlásí) | nízká | ✅ Na mobilu se všechna videa spouští až ťuknutím. |
+| 7 | „Hlavní video anglicky“ zní, jako by české neexistovalo; dvojí Přehrát; SHA256 na úvodu | nízká | ✅ „Celé video (EN titulky)“; jedno Přehrát; „ověří si, že je instalačka pravá“. |
+| 8 | Hardware, souhlas k obsahu screenshotů, kontakt, cena | – | ⏳ potřebuje majitele (viz doporučení). |
+| 9 | Úvod dlouhý, graf je i na Jak to funguje; Novinky „13 verzí za 36 dní“ zní jako beta | střední/nízká | Vědomě nechávám: graf je nejsilnější prvek webu a každá stránka musí obstát sama; počet verzí je fakt a ukazuje živý projekt. |
+
+### Nápady kola 3
+
+| Nápad | Přínos | Pracnost | Stav |
+|---|---|---|---|
+| **Rozcestník sekcí 1–6 na Jak to funguje** | střední (mobil) | malá | ✅ hotovo |
+| **Řádek „Zatím neumí: Twitch · macOS · Linux jen pro pozvané“ u stažení** | střední (poctivost hned, ne až ve FAQ) | malá | ✅ hotovo |
+| **Blok „Co ClipFarm posílá ven“** | vysoký pro skeptiky | malá | ✅ hotovo |
+| Tinder karta, kterou jde potáhnout | střední | střední | zásobník |
+| Rozcestník „Jsem streamer / Klipuju cizí kanály“ | střední | střední | zásobník |
+| Klávesy I/O na stránce posunou úchyty na mini ose | nízký–střední | střední | zásobník |
+| Plovoucí „Nahoru“ na dlouhých stránkách | nízký | malá | zásobník |
+| Slovníček pojmů (limit skóre, Přestříhat, zdroj) | střední | střední | zásobník |
+| Pás „Co umí“ na mobilu vodorovně | střední | malá | zásobník (skrývá obsah) |
+| Výběr „jen hlavní změny“ v Novinkách | nízký | malá | zásobník (shrnutí „Hlavně:“ už je) |
+
+### Ověření po kole 3
+
+Build 0/0/0, testy 4/4, 6 stránek × desktop/mobil: stavové kódy 200 (404 jen záměrně), žádná chyba v konzoli,
+49 odkazů a kotev bez chyby, žádný rozbitý obrázek, nic nepřetéká. Scroll 60 fps (měřeno v kole 2, od té doby jen
+obsahové změny).
+
+---
+
+## Konec kol a doporučení pro majitele
+
+Po 3. kole už nezbývá nic, co by mátlo nebo nefungovalo a šlo opravit bez údajů, které nemám, proto další kola
+nedělám. Zbývá na tobě (seřazeno podle dopadu na návštěvníky):
+
+1. **Odkaz ke stažení** – `DOWNLOAD_URL` v `site.config.mjs`. Hlavní důvod odchodu u všech recenzentů.
+2. **Kontakt na správce / autora** – `CONTACT_URL` (Discord server, `mailto:`). Ideálně i jméno/přezdívka místo
+   neosobního „správce“.
+3. **Cena nebo pravidla po zkušební době** – stačí jedna věta (FAQ „Je ClipFarm zdarma?“ v `src/lib/faq.ts`
+   a blok „Co potom“ na Stažení).
+4. **Skutečný výstup** – 2–3 neupravené klipy z vlastního streamu nebo se souhlasem streamera (16:9, 9:16,
+   9:16 kamera nahoře) místo/vedle promo videí. Nejsilnější argument pro klipaře.
+5. **Nové screenshoty z v1.10.01** (ministudio, Tinder pro klipy, galerie bez kasina a BRB klipů) – pak zmizí
+   rozmazání i poznámka „ze starší verze“.
+6. **Nároky na počítač a doba zpracování** (změřené: „3h stream 1080p na <CPU> → klipy za N min“, jde to vedle OBS?).
+7. Proč instalačka není podepsaná a SHA256 aktuální verze vedle odkazu – pro skeptiky.

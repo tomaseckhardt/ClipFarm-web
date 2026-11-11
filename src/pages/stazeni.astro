@@ -85,6 +85,17 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
     </div>
   </section>
 
+  <section class="wrap block" id="soukromi" aria-labelledby="h-priv">
+    <div class="card priv" data-reveal>
+      <h2 id="h-priv">Co ClipFarm posílá ven</h2>
+      <div class="cols3">
+        <div><h3>Zůstává u tebe</h3><p class="muted">Stažená a nahraná videa, chat, klipy i náhledy. Stahování, analýza i stříhání běží na tvém počítači a okno je dostupné jen z něj.</p></div>
+        <div><h3>Jde ven</h3><p class="muted">U ClipFarm.exe ověření přístupu (při spuštění a pak každých 6 hodin) – správce vidí tvůj e-mail a jméno z Discordu. Po spuštění kontrola nové verze ClipFarmu a yt-dlp na GitHubu.</p></div>
+        <div><h3>Jen když chceš</h3><p class="muted"><strong>Uložit diagnostiku</strong> vytvoří ZIP s logy a popisem systému – bez videí a bez přihlašovacích údajů. Pošleš ho jen ty sám.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section class="wrap block" id="instalace-linux" aria-labelledby="h-linux">
     <div class="split rev">
       <div class="split-text">
@@ -199,6 +210,8 @@ import { url, latest, hasDownload, contactUrl } from '../lib/site.ts';
   td { color: var(--soft); }
   tbody tr:last-child > * { border-bottom: 0; }
   tbody tr:hover { background: rgba(21, 28, 24, 0.6); }
+  .priv { display: grid; gap: 22px; }
+  .priv h2 { font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.6rem); }
   .calc-h { font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.7rem); margin: 40px 0 18px; }
   .illus-frame { border: 1px dashed var(--line2); border-radius: 22px; padding: 18px; cursor: default; user-select: none; }
   .illus-frame .ss, .illus-frame .login { pointer-events: none; }

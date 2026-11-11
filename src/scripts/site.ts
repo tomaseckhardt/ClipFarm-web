@@ -24,8 +24,8 @@ onScroll();
 const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
 const slowNet = conn?.saveData === true || /(^|-)2g|3g/.test(conn?.effectiveType ?? '');
 const narrow = matchMedia('(max-width: 700px)');
-// na mobilu se samo spouští jen hlavní video; ukázky až na ťuknutí (data, palec, plynulost)
-const autoplayOK = (v: HTMLVideoElement) => !reduce.matches && !slowNet && !(narrow.matches && v.closest('.samples'));
+// na mobilu se videa spouští až na ťuknutí (data – iOS pomalé připojení nehlásí – a palec)
+const autoplayOK = (_v: HTMLVideoElement) => !reduce.matches && !slowNet && !narrow.matches;
 const players = [...document.querySelectorAll<HTMLElement>('.player')];
 
 const videoIO = new IntersectionObserver(
